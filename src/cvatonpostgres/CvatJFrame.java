@@ -135,6 +135,11 @@ public class CvatJFrame extends javax.swing.JFrame {
 
         loadOut.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         loadOut.setText("LOAD OUT");
+        loadOut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadOutActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -212,6 +217,11 @@ public class CvatJFrame extends javax.swing.JFrame {
 
         isActiveBOLs.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         isActiveBOLs.setText("Active(Not delivered) BOLs");
+        isActiveBOLs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                isActiveBOLsActionPerformed(evt);
+            }
+        });
 
         jLabel11.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel11.setText("Vehicles");
@@ -252,6 +262,11 @@ public class CvatJFrame extends javax.swing.JFrame {
 
         getPastBOLVehicles.setFont(new java.awt.Font("DialogInput", 0, 11)); // NOI18N
         getPastBOLVehicles.setText("Get BOL's Vehicles");
+        getPastBOLVehicles.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                getPastBOLVehiclesActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -465,7 +480,7 @@ public class CvatJFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 768, Short.MAX_VALUE)
+                .addComponent(jTabbedPane5)
                 .addContainerGap())
         );
 
@@ -487,6 +502,18 @@ public class CvatJFrame extends javax.swing.JFrame {
     private void getListedBOLVehiclesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getListedBOLVehiclesActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_getListedBOLVehiclesActionPerformed
+
+    private void loadOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadOutActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_loadOutActionPerformed
+
+    private void getPastBOLVehiclesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getPastBOLVehiclesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_getPastBOLVehiclesActionPerformed
+
+    private void isActiveBOLsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_isActiveBOLsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_isActiveBOLsActionPerformed
 
     /**
      * @param args the command line arguments
