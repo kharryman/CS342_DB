@@ -11,7 +11,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
-import wang.app.gradebookOnPostgres.DBConnection;
+import cvatonpostgres.DBConnection;
 
 @SuppressWarnings("unchecked")
 class ExportImport {

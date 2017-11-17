@@ -18,9 +18,8 @@ public class ResultSetTableModel extends AbstractTableModel {
 
     public static final long serialVersionUID = 87823239;
 
-    ResultSetTableModel(String sql, JComboBox edItems) {
+    ResultSetTableModel(String sql) {
         this.sql = sql;
-        editableItems = edItems;
 
         //String  url = "jdbc:oracle:thin:@delphi.cs.csubak.edu:1521:dbs01",
         //        user="TGradebook", passwd="c3m4p2s";
@@ -71,18 +70,6 @@ public class ResultSetTableModel extends AbstractTableModel {
         }
     }
 
-    public boolean isCellEditable(int row, int col) {
-        if ( Globals.loadingTime ) return true;
-        // Notice that column 0, 1, 2, 3, 4, 5 should not allowed to change.
-        // They are CID/CRN, SID, Last, firt name, Ranking and Total,and need
-        // no changes. Ranking and total are calculated by stored procedure.
-        // Starting editable coloumn is 6 which is letter grade.
-        if ( col >= 0 && col < 6 ) return false;
-        if ( col == columnCount - 1 ) return true;
-        
-        if (col == 6 + editableItems.getSelectedIndex()) return true;
-        else return false;
-    }
 
     public int getRowCount() {
         return recordCount;
@@ -128,16 +115,13 @@ public class ResultSetTableModel extends AbstractTableModel {
                 return resultSet.getString(col + 1);
             }
             switch (col) {
-                case 0:
-                case 1:
-                case 4: // For Rank column in JTable whose column numbers start with 0
-                    return resultSet.getInt(col + 1);
-                case 2:
-                case 3:
-                case 6: // For last, firstname, letter Grade and comments 
-                    return resultSet.getString(col + 1);
-                default: // for total, assignments midterms and final columns
-                    return resultSet.getFloat(col + 1);
+                case 0:return resultSet.getString(col + 1);
+                case 1:return resultSet.getString(col + 1);
+                case 4: return resultSet.getInt(col + 1);
+                case 2:return resultSet.getString(col + 1);
+                case 3:return resultSet.getString(col + 1);
+                case 6: return resultSet.getString(col + 1);
+                default: return resultSet.getString(col + 1);
             }
         } catch (SQLException e) { //System.out.printf("Error in getValue(%d, %d)\n", row, col); 
             e.printStackTrace();
@@ -285,5 +269,4 @@ public class ResultSetTableModel extends AbstractTableModel {
     Vector<String> columnTitles;
     int currentRow = 0, columnCount = 0, recordCount = 0;
     boolean sortAsc = true;
-    JComboBox editableItems = null;
 }

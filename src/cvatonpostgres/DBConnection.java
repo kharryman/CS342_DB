@@ -1,4 +1,4 @@
-package wang.app.gradebookOnPostgres;
+package cvatonpostgres;
 
 /**
  * Database Connection
@@ -30,10 +30,12 @@ public class DBConnection {
 
     public static Connection getConnection() {
         try {
+            System.out.println("getConnection called");
             if (cnn != null && cnn.isValid(3)) {
                 return cnn;
             }
             cnn = DriverManager.getConnection(url, dbUser, passwd ) ;
+            System.out.println("cnn=" + cnn);
             cnn.setAutoCommit(true);
             return cnn;
         } catch (SQLException e) {

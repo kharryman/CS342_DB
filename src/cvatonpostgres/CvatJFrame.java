@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -18,15 +19,17 @@ public class CvatJFrame extends javax.swing.JFrame {
 
     static private JPanel myListedPanel;
     static public JFrame cvatJFrame;
+    ResultSetTableModel bolTableModel = null;
+    TableRowSorter sorter = null;
     /**
      * Creates new form CvatJFrame
      */
     public CvatJFrame() {
         cvatJFrame = this;        
         initComponents();     
-        cvatJFrame.setExtendedState(cvatJFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);        
-        //ListedPanel.setMaximumSize(new Dimension(cvatJFrame.getWidth(),cvatJFrame.getHeight()));
-        //ListedPanel.setPreferredSize(new Dimension(cvatJFrame.getWidth(),cvatJFrame.getHeight()));
+        //cvatJFrame.setExtendedState(cvatJFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);        
+        cvatJFrame.setSize(new Dimension(1700, 600));
+        
         
     }
 
@@ -88,6 +91,7 @@ public class CvatJFrame extends javax.swing.JFrame {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("LISTED VEHICLES");
 
+        getListedBOLs.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         getListedBOLs.setText("Get and Group Orders By Location");
         getListedBOLs.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -238,21 +242,6 @@ public class CvatJFrame extends javax.swing.JFrame {
             .addGroup(ListedPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ListedPanelLayout.createSequentialGroup()
-                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(ListedPanelLayout.createSequentialGroup()
-                                .addComponent(getListedBOLs)
-                                .addGap(27, 27, 27)
-                                .addComponent(jLabel9)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(selectFromRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel8)
-                                .addGap(18, 18, 18)
-                                .addComponent(selectToRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jLabel10))
-                        .addGap(129, 129, 129))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ListedPanelLayout.createSequentialGroup()
                         .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(ListedPanelLayout.createSequentialGroup()
@@ -270,7 +259,7 @@ public class CvatJFrame extends javax.swing.JFrame {
                                         .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(selectedTrailer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 236, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 231, Short.MAX_VALUE)
                                         .addComponent(loadOut)
                                         .addGap(119, 119, 119))
                                     .addGroup(ListedPanelLayout.createSequentialGroup()
@@ -278,25 +267,42 @@ public class CvatJFrame extends javax.swing.JFrame {
                                         .addGap(55, 55, 55)
                                         .addComponent(jScrollPane2))))
                             .addComponent(jScrollPane1))
-                        .addContainerGap())))
+                        .addContainerGap())
+                    .addGroup(ListedPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(getListedBOLs)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(selectFromRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(selectToRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(176, 176, 176))))
         );
         ListedPanelLayout.setVerticalGroup(
             ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ListedPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2)
-                .addGap(29, 29, 29)
-                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(selectFromRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(selectToRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8)
-                    .addComponent(jLabel9)
-                    .addComponent(getListedBOLs))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
+                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ListedPanelLayout.createSequentialGroup()
+                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(selectToRegion)
+                            .addComponent(jLabel8)
+                            .addComponent(selectFromRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel9)
+                            .addComponent(getListedBOLs))
+                        .addGap(20, 20, 20))
+                    .addGroup(ListedPanelLayout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34)
                 .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ListedPanelLayout.createSequentialGroup()
                         .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -313,13 +319,13 @@ public class CvatJFrame extends javax.swing.JFrame {
                     .addComponent(loadOut, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ListedPanelLayout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ListedPanelLayout.createSequentialGroup()
                         .addGap(19, 19, 19)
-                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ListedPanelLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(269, 269, 269))
         );
 
@@ -419,7 +425,7 @@ public class CvatJFrame extends javax.swing.JFrame {
                         .addComponent(jLabel6)
                         .addGap(66, 66, 66)
                         .addComponent(isActiveBOLs, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(411, Short.MAX_VALUE))
+                .addContainerGap(406, Short.MAX_VALUE))
         );
         BOLPanelLayout.setVerticalGroup(
             BOLPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -436,7 +442,7 @@ public class CvatJFrame extends javax.swing.JFrame {
                     .addComponent(getPastBOLVehicles))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(187, Short.MAX_VALUE))
+                .addContainerGap(206, Short.MAX_VALUE))
         );
 
         jTabbedPane5.addTab("Place Order", BOLPanel);
@@ -445,11 +451,11 @@ public class CvatJFrame extends javax.swing.JFrame {
         ExportImportPanel.setLayout(ExportImportPanelLayout);
         ExportImportPanelLayout.setHorizontalGroup(
             ExportImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1388, Short.MAX_VALUE)
+            .addGap(0, 1383, Short.MAX_VALUE)
         );
         ExportImportPanelLayout.setVerticalGroup(
             ExportImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 760, Short.MAX_VALUE)
+            .addGap(0, 779, Short.MAX_VALUE)
         );
 
         jTabbedPane5.addTab("Export/Import", ExportImportPanel);
@@ -489,6 +495,17 @@ public class CvatJFrame extends javax.swing.JFrame {
 
     private void getListedBOLsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getListedBOLsActionPerformed
         //THIS GETS LISTED BOLS IN LIST TAB BY FROM AND TO REGION
+        String selectedFrom = selectFromRegion.getSelectedItem().toString();
+        String selectedTo = selectToRegion.getSelectedItem().toString();
+        System.out.println("selectedFrom=" + selectedFrom + ", selectedTo=" + selectedTo);
+        String bolSQL = "select L1.Region,L1.Name,L2.Region,L2.Name from ((\"order\" O inner join location L1 on O.P_ID=L1.LocID) inner join location L2 on O.D_ID=L2.LocID) where"
+                + " L1.Region='" + selectedFrom + "' and L2.Region='" + selectedTo + "' group by "
+                + "L1.LocID, L2.LocID";
+        //String bolSQL = "select Name,Address from location";        
+
+        bolTableModel = new ResultSetTableModel(bolSQL);
+        //sorter = new TableRowSorter(bolTableModel);
+        bolTable.setModel(bolTableModel);
     }//GEN-LAST:event_getListedBOLsActionPerformed
 
     /**
