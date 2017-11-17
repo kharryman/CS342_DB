@@ -11,4 +11,5 @@ package cvatonpostgres;
  */
 public class Globals {
     public static boolean loadingTime = true;
+    public static String cvatData = "Data/";
 }

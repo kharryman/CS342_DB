@@ -5,10 +5,62 @@
  */
 package cvatonpostgres;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import javax.swing.JFileChooser;
+import javax.swing.JTextArea;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 /**
  *
  * @author Keith Harryman
  */
 public class Helpers {
-    
+
+    static void checkDataPath() {
+        if (!new File(Globals.cvatData).exists()) {
+            boolean succ = new File(Globals.cvatData + "/onlineData").mkdirs();
+            if (!succ) {
+                System.exit(-1);
+            }
+            new File(Globals.cvatData + "/backupData").mkdir();
+            //System.out.printf("After create two data folders\n");
+        }
+    }
+
+    static String getFileName(String dir) {
+        JFileChooser chooser = new JFileChooser(dir);
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Text File", "dat", "txt");
+        chooser.setFileFilter(filter);
+        int returnVal = chooser.showOpenDialog(null);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            //System.out.println("getPath() : " + chooser.getSelectedFile().getName());
+            //System.out.println("getAbsolutePath() : " + chooser.getSelectedFile().getAbsolutePath());
+            //try { System.out.println("getCanonicalPath() : " + chooser.getSelectedFile().getCanonicalPath());} catch (Exception e) {}
+            return chooser.getSelectedFile().getAbsolutePath(); // .getName() - File name only;
+        }
+        return null;
+    }
+
+    static void printFileOnTextArea(String fileName, JTextArea ta) {
+        String line = null;
+        BufferedReader in = null;
+        int cnt = 0;
+        ta.setText("");
+        try {
+            in = new BufferedReader(new FileReader(fileName));
+            while ((line = in.readLine()) != null) {
+                ta.append(line + "\n");
+                cnt++;
+            }
+        } catch (Exception e) {
+        }
+        try {
+            in.close();
+        } catch (Exception e2) {
+        }
+        ta.append(String.format("\nFile [%s] contains %d lines.\n",
+                fileName.substring(fileName.lastIndexOf("/") + 1), cnt));
+    }
 }
