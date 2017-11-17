@@ -45,6 +45,8 @@ public class CvatJFrame extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         getListedBOLVehicles = new javax.swing.JButton();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jLabel12 = new javax.swing.JLabel();
         LoadedPanel = new javax.swing.JPanel();
         selectDriver = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
@@ -70,6 +72,8 @@ public class CvatJFrame extends javax.swing.JFrame {
         jLabel1.setText("jLabel1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        ListedPanel.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -154,6 +158,11 @@ public class CvatJFrame extends javax.swing.JFrame {
             }
         });
 
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Charlie Pride", "Garth Brooks", "Buck Owens", "George Strait", "ELvis Presley", "Hank Snow", "Don Gibson", "Gene Autry", "Roy Rogers", "Gene Watson", "Clint Eastwood", "Jeff Bridges", "Walter Brenan", "Gwyneth Paltrow", "Woody Harrelson", "Tim McGraw", "Garrett Hedlund", "Gary LeVox", "Jay DeMarcus", "Joe Rooney" }));
+
+        jLabel12.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        jLabel12.setText("Selected Driver");
+
         javax.swing.GroupLayout ListedPanelLayout = new javax.swing.GroupLayout(ListedPanel);
         ListedPanel.setLayout(ListedPanelLayout);
         ListedPanelLayout.setHorizontalGroup(
@@ -187,8 +196,13 @@ public class CvatJFrame extends javax.swing.JFrame {
                         .addGap(152, 152, 152)
                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(39, 39, 39)
-                        .addComponent(getListedBOLVehicles)))
-                .addContainerGap(420, Short.MAX_VALUE))
+                        .addComponent(getListedBOLVehicles))
+                    .addGroup(ListedPanelLayout.createSequentialGroup()
+                        .addGap(315, 315, 315)
+                        .addComponent(jLabel12)
+                        .addGap(42, 42, 42)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(436, Short.MAX_VALUE))
         );
         ListedPanelLayout.setVerticalGroup(
             ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -203,7 +217,11 @@ public class CvatJFrame extends javax.swing.JFrame {
                     .addComponent(selectToRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
                     .addComponent(jLabel9))
-                .addGap(47, 47, 47)
+                .addGap(27, 27, 27)
+                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -214,7 +232,7 @@ public class CvatJFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(getListedBOLVehicles))
-                .addContainerGap(194, Short.MAX_VALUE))
+                .addContainerGap(185, Short.MAX_VALUE))
         );
 
         jTabbedPane5.addTab("Listed", ListedPanel);
@@ -487,26 +505,6 @@ public class CvatJFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void getLoadedBOLVehiclesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getLoadedBOLVehiclesActionPerformed
-        //THIS GETS LOADED BOL VEHICLES BY BOL
-    }//GEN-LAST:event_getLoadedBOLVehiclesActionPerformed
-
-    private void getListedBOLsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getListedBOLsActionPerformed
-        //THIS GETS LISTED BOLS IN LIST TAB BY FROM AND TO REGION
-    }//GEN-LAST:event_getListedBOLsActionPerformed
-
-    private void jTable1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTable1KeyPressed
-        //
-    }//GEN-LAST:event_jTable1KeyPressed
-
-    private void getListedBOLVehiclesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getListedBOLVehiclesActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_getListedBOLVehiclesActionPerformed
-
-    private void loadOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadOutActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_loadOutActionPerformed
-
     private void getPastBOLVehiclesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getPastBOLVehiclesActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_getPastBOLVehiclesActionPerformed
@@ -514,6 +512,26 @@ public class CvatJFrame extends javax.swing.JFrame {
     private void isActiveBOLsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_isActiveBOLsActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_isActiveBOLsActionPerformed
+
+    private void loadOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadOutActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_loadOutActionPerformed
+
+    private void getLoadedBOLVehiclesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getLoadedBOLVehiclesActionPerformed
+        //THIS GETS LOADED BOL VEHICLES BY BOL
+    }//GEN-LAST:event_getLoadedBOLVehiclesActionPerformed
+
+    private void getListedBOLVehiclesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getListedBOLVehiclesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_getListedBOLVehiclesActionPerformed
+
+    private void jTable1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTable1KeyPressed
+        //
+    }//GEN-LAST:event_jTable1KeyPressed
+
+    private void getListedBOLsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getListedBOLsActionPerformed
+        //THIS GETS LISTED BOLS IN LIST TAB BY FROM AND TO REGION
+    }//GEN-LAST:event_getListedBOLsActionPerformed
 
     /**
      * @param args the command line arguments
@@ -560,9 +578,11 @@ public class CvatJFrame extends javax.swing.JFrame {
     private java.awt.Button getLoadedBOLVehicles;
     private javax.swing.JButton getPastBOLVehicles;
     private javax.swing.JCheckBox isActiveBOLs;
+    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
