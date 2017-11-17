@@ -47,17 +47,7 @@ public class CvatJFrame extends javax.swing.JFrame {
         getListedBOLVehicles = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabel12 = new javax.swing.JLabel();
-        LoadedPanel = new javax.swing.JPanel();
-        selectDriver = new javax.swing.JComboBox<>();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
-        jLabel5 = new javax.swing.JLabel();
-        getLoadedBOLVehicles = new java.awt.Button();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        jTable3 = new javax.swing.JTable();
-        loadOut = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         BOLPanel = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -88,19 +78,19 @@ public class CvatJFrame extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "LOAD/UNLOAD", "From Region", "From Name", "To Region", "To Name"
+                "LOAD/UNLOAD", "Vehicles", "From Region", "From Name", "To Region", "To Name"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -163,6 +153,9 @@ public class CvatJFrame extends javax.swing.JFrame {
         jLabel12.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel12.setText("Selected Driver");
 
+        jButton1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jButton1.setText("LOAD OUT");
+
         javax.swing.GroupLayout ListedPanelLayout = new javax.swing.GroupLayout(ListedPanel);
         ListedPanel.setLayout(ListedPanelLayout);
         ListedPanelLayout.setHorizontalGroup(
@@ -171,17 +164,17 @@ public class CvatJFrame extends javax.swing.JFrame {
                 .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ListedPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(getListedBOLs))
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(ListedPanelLayout.createSequentialGroup()
-                        .addGap(150, 150, 150)
+                        .addContainerGap()
+                        .addComponent(getListedBOLs)
+                        .addGap(27, 27, 27)
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(selectFromRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(188, 188, 188)
+                        .addGap(18, 18, 18)
                         .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(18, 18, 18)
                         .addComponent(selectToRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(ListedPanelLayout.createSequentialGroup()
                         .addGap(128, 128, 128)
@@ -198,30 +191,27 @@ public class CvatJFrame extends javax.swing.JFrame {
                         .addGap(39, 39, 39)
                         .addComponent(getListedBOLVehicles))
                     .addGroup(ListedPanelLayout.createSequentialGroup()
-                        .addGap(315, 315, 315)
+                        .addGap(251, 251, 251)
                         .addComponent(jLabel12)
-                        .addGap(42, 42, 42)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(34, 34, 34)
+                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(39, 39, 39)
+                        .addComponent(jButton1)))
                 .addContainerGap(436, Short.MAX_VALUE))
         );
         ListedPanelLayout.setVerticalGroup(
             ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ListedPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(getListedBOLs, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(28, 28, 28)
+                .addComponent(jLabel2)
+                .addGap(29, 29, 29)
                 .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(selectFromRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(selectToRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
-                    .addComponent(jLabel9))
-                .addGap(27, 27, 27)
-                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel12))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jLabel9)
+                    .addComponent(getListedBOLs, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(47, 47, 47)
                 .addComponent(jLabel10)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -232,130 +222,15 @@ public class CvatJFrame extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(getListedBOLVehicles))
-                .addContainerGap(185, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12)
+                    .addComponent(jButton1))
+                .addGap(118, 118, 118))
         );
 
         jTabbedPane5.addTab("Listed", ListedPanel);
-
-        selectDriver.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Driver 1", "Driver 2", "Driver 3", "Driver 4" }));
-
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel3.setText("Select Driver");
-
-        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel4.setText("BOLs");
-
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "BOL ID", "Number Vehicles", "Pickup Name", "Dropoff Name", "Pickup Address", "Dropoff Address", "ETA"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane2.setViewportView(jTable2);
-        if (jTable2.getColumnModel().getColumnCount() > 0) {
-            jTable2.getColumnModel().getColumn(0).setResizable(false);
-        }
-
-        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel5.setText("VEHICLES");
-
-        getLoadedBOLVehicles.setLabel("Get BOL's Vehicles");
-        getLoadedBOLVehicles.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                getLoadedBOLVehiclesActionPerformed(evt);
-            }
-        });
-
-        jTable3.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
-            },
-            new String [] {
-                "VIN", "Year", "Make", "Model", "Weight", "Type"
-            }
-        ));
-        jScrollPane3.setViewportView(jTable3);
-
-        loadOut.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        loadOut.setText("LOAD OUT");
-        loadOut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loadOutActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout LoadedPanelLayout = new javax.swing.GroupLayout(LoadedPanel);
-        LoadedPanel.setLayout(LoadedPanelLayout);
-        LoadedPanelLayout.setHorizontalGroup(
-            LoadedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(LoadedPanelLayout.createSequentialGroup()
-                .addGroup(LoadedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(LoadedPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(33, 33, 33)
-                        .addComponent(selectDriver, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(LoadedPanelLayout.createSequentialGroup()
-                        .addGap(22, 22, 22)
-                        .addGroup(LoadedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 564, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(LoadedPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addGap(18, 18, 18)
-                                .addComponent(getLoadedBOLVehicles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(LoadedPanelLayout.createSequentialGroup()
-                        .addGap(153, 153, 153)
-                        .addComponent(loadOut)))
-                .addContainerGap(689, Short.MAX_VALUE))
-        );
-        LoadedPanelLayout.setVerticalGroup(
-            LoadedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(LoadedPanelLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addGroup(LoadedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(selectDriver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addGap(28, 28, 28)
-                .addComponent(jLabel4)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38)
-                .addGroup(LoadedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(getLoadedBOLVehicles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
-                .addComponent(loadOut)
-                .addContainerGap(242, Short.MAX_VALUE))
-        );
-
-        jTabbedPane5.addTab("Loaded", LoadedPanel);
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel6.setText("ASSIGNED BOlS");
@@ -471,7 +346,7 @@ public class CvatJFrame extends javax.swing.JFrame {
                 .addContainerGap(167, Short.MAX_VALUE))
         );
 
-        jTabbedPane5.addTab("BOLs", BOLPanel);
+        jTabbedPane5.addTab("Place Order", BOLPanel);
 
         javax.swing.GroupLayout ExportImportPanelLayout = new javax.swing.GroupLayout(ExportImportPanel);
         ExportImportPanel.setLayout(ExportImportPanelLayout);
@@ -512,14 +387,6 @@ public class CvatJFrame extends javax.swing.JFrame {
     private void isActiveBOLsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_isActiveBOLsActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_isActiveBOLsActionPerformed
-
-    private void loadOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadOutActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_loadOutActionPerformed
-
-    private void getLoadedBOLVehiclesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getLoadedBOLVehiclesActionPerformed
-        //THIS GETS LOADED BOL VEHICLES BY BOL
-    }//GEN-LAST:event_getLoadedBOLVehiclesActionPerformed
 
     private void getListedBOLVehiclesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getListedBOLVehiclesActionPerformed
         // TODO add your handling code here:
@@ -572,28 +439,22 @@ public class CvatJFrame extends javax.swing.JFrame {
     private javax.swing.JPanel BOLPanel;
     private javax.swing.JPanel ExportImportPanel;
     private javax.swing.JPanel ListedPanel;
-    private javax.swing.JPanel LoadedPanel;
     private javax.swing.JButton getListedBOLVehicles;
     private javax.swing.JButton getListedBOLs;
-    private java.awt.Button getLoadedBOLVehicles;
     private javax.swing.JButton getPastBOLVehicles;
     private javax.swing.JCheckBox isActiveBOLs;
+    private javax.swing.JButton jButton1;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
@@ -601,13 +462,9 @@ public class CvatJFrame extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane5;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTable jTable2;
-    private javax.swing.JTable jTable3;
     private javax.swing.JTable jTable4;
     private javax.swing.JTable jTable5;
     private javax.swing.JTable jTable6;
-    private javax.swing.JButton loadOut;
-    private javax.swing.JComboBox<String> selectDriver;
     private javax.swing.JComboBox<String> selectFromRegion;
     private javax.swing.JComboBox<String> selectToRegion;
     // End of variables declaration//GEN-END:variables
