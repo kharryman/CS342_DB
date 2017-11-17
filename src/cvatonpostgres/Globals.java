@@ -10,5 +10,5 @@ package cvatonpostgres;
  * @author Keith Harryman
  */
 public class Globals {
-    
+    public static boolean loadingTime = true;
 }
