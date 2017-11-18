@@ -17,16 +17,22 @@ import javax.swing.table.DefaultTableCellRenderer;
  */
 public class CellRenderer extends DefaultTableCellRenderer {
 
+    CvatJFrame cvatJFrame;
+
     public Component getTableCellRendererComponent(JTable table, Object obj, boolean isSelected, boolean hasFocus, int row, int column) {
         Component cell = super.getTableCellRendererComponent(table, obj, isSelected, hasFocus, row, column);
-        if (obj.toString().split(" ")[1].toUpperCase().equals("LOAD")){
-           cell.setBackground(Color.CYAN);    
+        if (cvatJFrame.myFrame.selectedTable.equals("bolsTable") || cvatJFrame.myFrame.selectedTable.equals("bolVehiclesTable")) {
+            if (obj.toString().split(" ")[1].toUpperCase().equals("LOAD")) {
+                cell.setBackground(Color.CYAN);
+            } else if (obj.toString().split(" ")[1].toUpperCase().equals("UNLOAD")) {
+                cell.setBackground(Color.LIGHT_GRAY);
+            }
+            cell.setForeground(Color.black);
+            ((DefaultTableCellRenderer) cell).setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
         }
-        else if (obj.toString().split(" ")[1].toUpperCase().equals("UNLOAD")){
-           cell.setBackground(Color.LIGHT_GRAY);     
-        }        
-        cell.setForeground(Color.black);
-        ((DefaultTableCellRenderer)cell).setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
+        else{
+            ((DefaultTableCellRenderer) cell).setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
+        }
         return cell;
     }
 }

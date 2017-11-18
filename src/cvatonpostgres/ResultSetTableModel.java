@@ -107,7 +107,7 @@ public class ResultSetTableModel extends AbstractTableModel {
 
     public String getValueAt(int row, int col) {
         try {
-            if (resultSet.isClosed()) {
+            if (resultSet.isClosed() || cvatJframe.canGetValue==false) {
                 return null;
             }
             resultSet.relative(row - currentRow);
@@ -119,6 +119,9 @@ public class ResultSetTableModel extends AbstractTableModel {
                     } else if (cvatJframe.selectedTable.equals("bolVehiclesTable")) {          
                         System.out.println("bol index="+cvatJframe.selectedBOLIndex+",vehicle="+row);
                         return (row + 1) + " " + cvatJframe.getVehiclesLoaded(cvatJframe.selectedBOLIndex, row);
+                    }
+                    else{
+                        return resultSet.getString(col+1);
                     }
                 } else {                                        
                     return resultSet.getString(col+1);
