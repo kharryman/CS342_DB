@@ -59,7 +59,6 @@ public class CvatJFrame extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        getListedBOLVehicles = new javax.swing.JButton();
         selectedDriver = new javax.swing.JComboBox<>();
         jLabel12 = new javax.swing.JLabel();
         loadOut = new javax.swing.JButton();
@@ -69,6 +68,9 @@ public class CvatJFrame extends javax.swing.JFrame {
         trailerTable = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         driverTable = new javax.swing.JTable();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jLabel3 = new javax.swing.JLabel();
         BOLPanel = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -106,14 +108,14 @@ public class CvatJFrame extends javax.swing.JFrame {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "LOAD/UNLOAD", "Vehicles", "From Region", "From Name", "To Region", "To Name"
+                "#", "LOAD/UNLOAD", "From Name", "From Address", "To Name", "To Address"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                true, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -126,9 +128,9 @@ public class CvatJFrame extends javax.swing.JFrame {
         });
         bolTable.setColumnSelectionAllowed(true);
         bolTable.getTableHeader().setReorderingAllowed(false);
-        bolTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                bolTableKeyPressed(evt);
+        bolTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                bolTableMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(bolTable);
@@ -140,17 +142,17 @@ public class CvatJFrame extends javax.swing.JFrame {
 
         vehicleTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
             },
             new String [] {
-                "VIN", "Year", "Make", "Model", "BOL ID"
+                "VIN", "Year", "Make", "Model", "Size", "BOL ID"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -159,8 +161,8 @@ public class CvatJFrame extends javax.swing.JFrame {
         });
         jScrollPane5.setViewportView(vehicleTable);
 
-        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel7.setText("Vehicles");
+        jLabel7.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        jLabel7.setText("Loaded Vehicles");
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel8.setText("Region To:");
@@ -170,14 +172,6 @@ public class CvatJFrame extends javax.swing.JFrame {
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel10.setText("Order Results:");
-
-        getListedBOLVehicles.setFont(new java.awt.Font("DialogInput", 0, 11)); // NOI18N
-        getListedBOLVehicles.setText("Get BOL's Vehicles");
-        getListedBOLVehicles.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                getListedBOLVehiclesActionPerformed(evt);
-            }
-        });
 
         selectedDriver.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Charlie Pride", "Garth Brooks", "Buck Owens", "George Strait", "ELvis Presley", "Hank Snow", "Don Gibson", "Gene Autry", "Roy Rogers", "Gene Watson", "Clint Eastwood", "Jeff Bridges", "Walter Brenan", "Gwyneth Paltrow", "Woody Harrelson", "Tim McGraw", "Garrett Hedlund", "Gary LeVox", "Jay DeMarcus", "Joe Rooney" }));
 
@@ -235,6 +229,30 @@ public class CvatJFrame extends javax.swing.JFrame {
         });
         jScrollPane3.setViewportView(driverTable);
 
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "VIN", "Year", "Make", "Model", "Size"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        jScrollPane7.setViewportView(jTable1);
+
+        jLabel3.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        jLabel3.setText("Selected BOL's Vehicles");
+
         javax.swing.GroupLayout ListedPanelLayout = new javax.swing.GroupLayout(ListedPanel);
         ListedPanel.setLayout(ListedPanelLayout);
         ListedPanelLayout.setHorizontalGroup(
@@ -242,90 +260,96 @@ public class CvatJFrame extends javax.swing.JFrame {
             .addGroup(ListedPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ListedPanelLayout.createSequentialGroup()
-                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(ListedPanelLayout.createSequentialGroup()
-                                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(getListedBOLVehicles)
-                                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 313, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(43, 43, 43)
-                                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(ListedPanelLayout.createSequentialGroup()
-                                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel12)
-                                            .addComponent(selectedDriver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(323, 323, 323)
-                                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(selectedTrailer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 231, Short.MAX_VALUE)
-                                        .addComponent(loadOut)
-                                        .addGap(119, 119, 119))
-                                    .addGroup(ListedPanelLayout.createSequentialGroup()
-                                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(55, 55, 55)
-                                        .addComponent(jScrollPane2))))
-                            .addComponent(jScrollPane1))
-                        .addContainerGap())
                     .addGroup(ListedPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(getListedBOLs)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(selectFromRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(selectToRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 308, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(176, 176, 176))))
+                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(ListedPanelLayout.createSequentialGroup()
+                                .addGap(8, 8, 8)
+                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(51, 51, 51)
+                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(ListedPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel12)
+                                .addGap(376, 376, 376)
+                                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(selectedTrailer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(selectedDriver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(ListedPanelLayout.createSequentialGroup()
+                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(loadOut)
+                        .addGroup(ListedPanelLayout.createSequentialGroup()
+                            .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, ListedPanelLayout.createSequentialGroup()
+                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(getListedBOLs))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, ListedPanelLayout.createSequentialGroup()
+                                        .addComponent(jLabel10)
+                                        .addGap(40, 40, 40)
+                                        .addComponent(jLabel9)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(selectFromRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(31, 31, 31)
+                                        .addComponent(jLabel8)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(selectToRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(ListedPanelLayout.createSequentialGroup()
+                                    .addGap(38, 38, 38)
+                                    .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 578, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(ListedPanelLayout.createSequentialGroup()
+                                    .addGap(65, 65, 65)
+                                    .addComponent(jLabel3))))))
+                .addContainerGap(259, Short.MAX_VALUE))
         );
         ListedPanelLayout.setVerticalGroup(
             ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ListedPanelLayout.createSequentialGroup()
                 .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ListedPanelLayout.createSequentialGroup()
+                        .addContainerGap()
                         .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
-                            .addComponent(selectToRegion)
-                            .addComponent(jLabel8)
-                            .addComponent(selectFromRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel9)
-                            .addComponent(getListedBOLs))
-                        .addGap(20, 20, 20))
-                    .addGroup(ListedPanelLayout.createSequentialGroup()
-                        .addGap(19, 19, 19)
+                            .addComponent(getListedBOLs)))
+                    .addComponent(loadOut))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel10)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
+                        .addComponent(jLabel9)
+                        .addComponent(selectFromRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(selectToRegion, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel8)
+                        .addComponent(jLabel3)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(43, 43, 43)
                 .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ListedPanelLayout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ListedPanelLayout.createSequentialGroup()
                         .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel12)
                             .addComponent(jLabel4))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(getListedBOLVehicles)
-                            .addComponent(selectedTrailer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(ListedPanelLayout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addComponent(selectedDriver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(loadOut, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ListedPanelLayout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ListedPanelLayout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(18, 18, 18))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ListedPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(9, 9, 9)))
+                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(selectedDriver, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(selectedTrailer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(269, 269, 269))
         );
 
@@ -425,7 +449,7 @@ public class CvatJFrame extends javax.swing.JFrame {
                         .addComponent(jLabel6)
                         .addGap(66, 66, 66)
                         .addComponent(isActiveBOLs, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(406, Short.MAX_VALUE))
+                .addContainerGap(769, Short.MAX_VALUE))
         );
         BOLPanelLayout.setVerticalGroup(
             BOLPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -442,7 +466,7 @@ public class CvatJFrame extends javax.swing.JFrame {
                     .addComponent(getPastBOLVehicles))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(206, Short.MAX_VALUE))
+                .addContainerGap(256, Short.MAX_VALUE))
         );
 
         jTabbedPane5.addTab("Place Order", BOLPanel);
@@ -451,11 +475,11 @@ public class CvatJFrame extends javax.swing.JFrame {
         ExportImportPanel.setLayout(ExportImportPanelLayout);
         ExportImportPanelLayout.setHorizontalGroup(
             ExportImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1383, Short.MAX_VALUE)
+            .addGap(0, 1746, Short.MAX_VALUE)
         );
         ExportImportPanelLayout.setVerticalGroup(
             ExportImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 779, Short.MAX_VALUE)
+            .addGap(0, 829, Short.MAX_VALUE)
         );
 
         jTabbedPane5.addTab("Export/Import", ExportImportPanel);
@@ -485,21 +509,17 @@ public class CvatJFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_isActiveBOLsActionPerformed
 
-    private void getListedBOLVehiclesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getListedBOLVehiclesActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_getListedBOLVehiclesActionPerformed
-
-    private void bolTableKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_bolTableKeyPressed
-        //
-    }//GEN-LAST:event_bolTableKeyPressed
-
     private void getListedBOLsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getListedBOLsActionPerformed
         //THIS GETS LISTED BOLS IN LIST TAB BY FROM AND TO REGION
         String selectedFrom = selectFromRegion.getSelectedItem().toString();
         String selectedTo = selectToRegion.getSelectedItem().toString();
         System.out.println("selectedFrom=" + selectedFrom + ", selectedTo=" + selectedTo);
-        String bolSQL = "select L1.Region,L1.Name,L2.Region,L2.Name from ((\"order\" O inner join location L1 on O.P_ID=L1.LocID) inner join location L2 on O.D_ID=L2.LocID) where"
-                + " L1.Region='" + selectedFrom + "' and L2.Region='" + selectedTo + "' group by "
+        String vehicles="";        
+        String bolSQL = "select row_number() over(order by L1.LocID,L2.LocID)as \"#\", "
+                + "L1.Name as \"Pickup Name\",L1.Address as \"Pickup Address\", "
+                + "L2.Name as \"Destionation Name\", L1.Address as \"Destination Address\" from "
+                + "(((\"order\" O inner join location L1 on O.P_ID=L1.LocID) inner join location L2 on O.D_ID=L2.LocID) inner join vehicle V on O.OrdID=V.OrdID) where "
+                + "L1.Region='" + selectedFrom + "' and L2.Region='" + selectedTo + "' group by "
                 + "L1.LocID, L2.LocID";
         //String bolSQL = "select Name,Address from location";        
 
@@ -507,6 +527,13 @@ public class CvatJFrame extends javax.swing.JFrame {
         //sorter = new TableRowSorter(bolTableModel);
         bolTable.setModel(bolTableModel);
     }//GEN-LAST:event_getListedBOLsActionPerformed
+
+    private void bolTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bolTableMouseClicked
+        // TODO add your handling code here:
+        int row = bolTable.rowAtPoint(evt.getPoint());
+        int col = bolTable.columnAtPoint(evt.getPoint());
+        System.out.println("bolTable row=" + row +", col=" + col);
+    }//GEN-LAST:event_bolTableMouseClicked
 
     /**
      * @param args the command line arguments
@@ -551,7 +578,6 @@ public class CvatJFrame extends javax.swing.JFrame {
     private javax.swing.JPanel ListedPanel;
     private javax.swing.JTable bolTable;
     private javax.swing.JTable driverTable;
-    private javax.swing.JButton getListedBOLVehicles;
     private javax.swing.JButton getListedBOLs;
     private javax.swing.JButton getPastBOLVehicles;
     private javax.swing.JCheckBox isActiveBOLs;
@@ -560,6 +586,7 @@ public class CvatJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -571,9 +598,11 @@ public class CvatJFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane5;
+    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable4;
     private javax.swing.JTable jTable6;
     private javax.swing.JButton loadOut;
