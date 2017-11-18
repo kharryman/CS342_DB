@@ -4,7 +4,6 @@ package cvatonpostgres;
  * Table Model based on JDBC 2.0 : An JTable model is defined for a SQL
  * statement.
  */
-
 import java.sql.*;
 import javax.swing.table.*;
 import java.awt.*;
@@ -13,18 +12,21 @@ import javax.swing.*;
 import javax.swing.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ResultSetTableModel extends AbstractTableModel {
 
     public static final long serialVersionUID = 87823239;
+    public CvatJFrame cvatJframe;
 
     ResultSetTableModel(String sql) {
         this.sql = sql;
-
+        cvatJframe = CvatJFrame.myFrame;
         //String  url = "jdbc:oracle:thin:@delphi.cs.csubak.edu:1521:dbs01",
         //        user="TGradebook", passwd="c3m4p2s";
         try {
-                // DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
+            // DriverManager.registerDriver(new oracle.jdbc.driver.OracleDriver());
             // cnn = DriverManager.getConnection(url, user, passwd);
             cnn = DBConnection.getConnection();
             cnn.setAutoCommit(true);
@@ -70,7 +72,6 @@ public class ResultSetTableModel extends AbstractTableModel {
         }
     }
 
-
     public int getRowCount() {
         return recordCount;
     }
@@ -104,29 +105,29 @@ public class ResultSetTableModel extends AbstractTableModel {
         }
     }
 
-    public Object getValueAt(int row, int col) {
+    public String getValueAt(int row, int col) {
         try {
-            if ( resultSet.isClosed() ) return null;
+            if (resultSet.isClosed()) {
+                return null;
+            }
             resultSet.relative(row - currentRow);
             currentRow = row;
-            //System.out.printf("getValueAt( %d, %d)\n", row, col);
-            // If col is comments column.
-            if (col == columnCount - 1) {
-                return resultSet.getString(col + 1);
-            }
-            switch (col) {
-                case 0:return resultSet.getString(col + 1);
-                case 1:return resultSet.getString(col + 1);
-                case 4: return resultSet.getInt(col + 1);
-                case 2:return resultSet.getString(col + 1);
-                case 3:return resultSet.getString(col + 1);
-                case 6: return resultSet.getString(col + 1);
-                default: return resultSet.getString(col + 1);
-            }
+            //if (row != 0) {
+                if (col == 0) {
+                    if (cvatJframe.selectedTable.equals("bolsTable")) {
+                        return (row + 1) + " " + cvatJframe.getBolsLoaded(row);
+                    } else if (cvatJframe.selectedTable.equals("bolVehiclesTable")) {          
+                        System.out.println("bol index="+cvatJframe.selectedBOLIndex+",vehicle="+row);
+                        return (row + 1) + " " + cvatJframe.getVehiclesLoaded(cvatJframe.selectedBOLIndex, row);
+                    }
+                } else {                                        
+                    return resultSet.getString(col+1);
+                }
+            //}
         } catch (SQLException e) { //System.out.printf("Error in getValue(%d, %d)\n", row, col); 
             e.printStackTrace();
         }
-        return " ";
+        return "";
     }
 
     public String resultRowToString(int row) {
@@ -144,39 +145,9 @@ public class ResultSetTableModel extends AbstractTableModel {
     }
 
     public void setValueAt(Object obj, int row, int col) {
-        if ( ! isCellEditable( row, col ))  return;
-        try {
-            resultSet.relative(row - currentRow);
-            currentRow = row;
-        // The column count changes, and the comment is not Float class,
-            // Thie followwing if-statement will shorten the code.
-            if (col == columnCount - 1) {
-                resultSet.updateString(col + 1, (String) obj);
-            } else {
-                switch (col) {
-                    case 0:
-                    case 1:
-                    case 4: // For cid, sid, Rank column. Column 0 and 1 are removed for this applicaiton
-                        resultSet.updateInt(col + 1, (int) obj);
-                        break;
-                    // last, firstname, letter Grade and comments 
-                    case 2:
-                    case 3:
-                    case 6:
-                        resultSet.updateString(col + 1, (String) obj);
-                        break;
-                    default: // for total, assignments midterms and final columns
-                        resultSet.updateFloat(col + 1, Float.parseFloat(obj.toString()));
-                        break;
-                }
-            }
-            Globals.loadingTime = true;
-            resultSet.updateRow();
-            Globals.loadingTime = false;
-        } catch (SQLException e) {
-            Globals.loadingTime = false;
-            e.printStackTrace();
-        }
+        //if ( ! isCellEditable( row, col ))  return;
+        System.out.println("Setting value for row=" + row + ", col=" + col);
+        fireTableCellUpdated(row, col);
     }
 
     public void addRow(Object[] newValues) {
@@ -209,7 +180,7 @@ public class ResultSetTableModel extends AbstractTableModel {
             resultSet.deleteRow();
             // currentRow = 0;
             recordCount--;
-         // getResultSet();
+            // getResultSet();
             // fireTableDataChanged();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -256,10 +227,16 @@ public class ResultSetTableModel extends AbstractTableModel {
             return -1;
         }
     }
+
     public void clear() {
-        try { resultSet.close(); } catch (Exception e) { e.printStackTrace();}
+        try {
+            resultSet.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         fireTableDataChanged();
     }
+
     // Data members
     String sql = null;
     Connection cnn;

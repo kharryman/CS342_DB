@@ -234,16 +234,16 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTable" name="bolTable">
+                <Component class="javax.swing.JTable" name="bolsTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="6" rowCount="3">
-                        <Column editable="true" title="#" type="java.lang.Object"/>
                         <Column editable="false" title="LOAD/UNLOAD" type="java.lang.String"/>
                         <Column editable="false" title="From Name" type="java.lang.String"/>
                         <Column editable="false" title="From Address" type="java.lang.String"/>
                         <Column editable="false" title="To Name" type="java.lang.String"/>
                         <Column editable="true" title="To Address" type="java.lang.String"/>
+                        <Column editable="true" title="# Vehicles" type="java.lang.String"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -286,7 +286,7 @@
                     </Property>
                   </Properties>
                   <Events>
-                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bolTableMouseClicked"/>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bolsTableMouseClicked"/>
                   </Events>
                 </Component>
               </SubComponents>
@@ -326,7 +326,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTable" name="vehicleTable">
+                <Component class="javax.swing.JTable" name="vehiclesTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="6" rowCount="4">
@@ -603,7 +603,7 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JTable" name="jTable1">
+                <Component class="javax.swing.JTable" name="bolVehiclesTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                       <Table columnCount="5" rowCount="4">
