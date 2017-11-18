@@ -21,12 +21,13 @@ public class CellRenderer extends DefaultTableCellRenderer {
 
     public Component getTableCellRendererComponent(JTable table, Object obj, boolean isSelected, boolean hasFocus, int row, int column) {
         Component cell = super.getTableCellRendererComponent(table, obj, isSelected, hasFocus, row, column);
-        if (cvatJFrame.myFrame.selectedTable.equals("bolsTable") || cvatJFrame.myFrame.selectedTable.equals("bolVehiclesTable")) {
+        System.out.println("CELL RENDERER CALLED");
+        if (cvatJFrame.myFrame.selectedTable.equals("bolsTable") || cvatJFrame.myFrame.selectedTable.equals("bolVehiclesTable")  || cvatJFrame.myFrame.selectedTable.equals("loadedVehiclesTable")) {
             if (obj.toString().split(" ")[1].toUpperCase().equals("LOAD")) {
                 cell.setBackground(Color.CYAN);
             } else if (obj.toString().split(" ")[1].toUpperCase().equals("UNLOAD")) {
                 cell.setBackground(Color.LIGHT_GRAY);
-            }
+            } 
             cell.setForeground(Color.black);
             ((DefaultTableCellRenderer) cell).setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
         }

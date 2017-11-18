@@ -43,11 +43,13 @@ public class CvatJFrame extends javax.swing.JFrame {
     TableCellRenderer defaultRenderer;
     CellRenderer cellRenderer;
     List<String> bolsLoaded;
-    List<List<String>> vehiclesLoaded;    
+    List<List<String>> vehiclesLoaded;
     static public String selectedTable = "bolsTable";
     static public int selectedBOLIndex;
-    private int selectedBOLRow=-1;
-    static public boolean canGetValue=true, bolsTableReady=false;
+    private int selectedBOLRow = -1;
+    static public boolean canGetValue = true, bolsTableReady = false;
+    public int loadedVehiclesNextIndex = 0;
+
     /**
      * Creates new form CvatJFrame
      */
@@ -56,13 +58,13 @@ public class CvatJFrame extends javax.swing.JFrame {
         myFrame = this;
         cellRenderer = new CellRenderer();
         initComponents();
-        //cvatJFrame.setExtendedState(cvatJFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);        
-        cvatJFrame.setSize(new Dimension(1700, 600));
+        cvatJFrame.setExtendedState(cvatJFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);        
+        //cvatJFrame.setSize(new Dimension(1700, 600));
         bolsLoaded = new ArrayList<String>();
         vehiclesLoaded = new ArrayList<List<String>>();
         selectedBOLIndex = 0;
         loadDrivers();
-        loadTrailers();        
+        loadTrailers();
     }
 
     /**
@@ -86,7 +88,7 @@ public class CvatJFrame extends javax.swing.JFrame {
         selectFromRegion = new javax.swing.JComboBox<>();
         selectToRegion = new javax.swing.JComboBox<>();
         jScrollPane5 = new javax.swing.JScrollPane();
-        vehiclesTable = new javax.swing.JTable();
+        loadedVehiclesTable = new javax.swing.JTable();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
@@ -173,7 +175,7 @@ public class CvatJFrame extends javax.swing.JFrame {
 
         selectToRegion.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Arizona", "Bay Area California", "Texas" }));
 
-        vehiclesTable.setModel(new javax.swing.table.DefaultTableModel(
+        loadedVehiclesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
                 {null, null, null, null, null, null},
@@ -181,7 +183,7 @@ public class CvatJFrame extends javax.swing.JFrame {
                 {null, null, null, null, null, null}
             },
             new String [] {
-                "VIN", "Year", "Make", "Model", "Size", "BOL ID"
+                "LOAD/UNLOAD", "VIN", "Year", "Make", "Model", "Size"
             }
         ) {
             Class[] types = new Class [] {
@@ -192,7 +194,7 @@ public class CvatJFrame extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jScrollPane5.setViewportView(vehiclesTable);
+        jScrollPane5.setViewportView(loadedVehiclesTable);
 
         jLabel7.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
         jLabel7.setText("Loaded Vehicles");
@@ -279,6 +281,11 @@ public class CvatJFrame extends javax.swing.JFrame {
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+        });
+        bolVehiclesTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                bolVehiclesTableMouseClicked(evt);
             }
         });
         jScrollPane7.setViewportView(bolVehiclesTable);
@@ -546,7 +553,7 @@ public class CvatJFrame extends javax.swing.JFrame {
         //THIS GETS LISTED BOLS IN LIST TAB BY FROM AND TO REGION
         String selectedFrom = selectFromRegion.getSelectedItem().toString();
         String selectedTo = selectToRegion.getSelectedItem().toString();
-        System.out.println("selectedFrom=" + selectedFrom + ", selectedTo=" + selectedTo);        
+        System.out.println("selectedFrom=" + selectedFrom + ", selectedTo=" + selectedTo);
         String bolSQL = "select '0' as \"LOAD/UNLOAD\", "
                 + "L1.Name as \"From Name\",L1.Address as \"From Address\", "
                 + "L2.Name as \"To Name\", L2.Address as \"To Address\", COUNT(V.VIN) as \"# VEHICLES\" from "
@@ -560,69 +567,67 @@ public class CvatJFrame extends javax.swing.JFrame {
         //sorter = new TableRowSorter(bolTableModel);
         bolsTable.setModel(bolsTableModel);
         bolsTable.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);
-        bolsLoaded.clear();        
-        for (int i=0;i<bolsTableModel.getRowCount();i++){
-            bolsLoaded.add("LOAD");            
+        bolsLoaded.clear();
+        for (int i = 0; i < bolsTableModel.getRowCount(); i++) {
+            bolsLoaded.add("LOAD");
         }
         int number_vehicles;
         vehiclesLoaded.clear();
-        System.out.println("bolsTableModel row count="+bolsTableModel.getRowCount());        
-        for(int r=0;r<bolsTableModel.getRowCount();r++){            
-           number_vehicles = Integer.parseInt(bolsTable.getValueAt(r, 5).toString());
-           System.out.println("number vehicles=" + number_vehicles);
-           vehiclesLoaded.add(new ArrayList<String>());
-           for(int v=0;v<number_vehicles;v++){
-               vehiclesLoaded.get(r).add("LOAD");
-           }
+        System.out.println("bolsTableModel row count=" + bolsTableModel.getRowCount());
+        for (int r = 0; r < bolsTableModel.getRowCount(); r++) {
+            number_vehicles = Integer.parseInt(bolsTable.getValueAt(r, 5).toString());
+            System.out.println("number vehicles=" + number_vehicles);
+            vehiclesLoaded.add(new ArrayList<String>());
+            for (int v = 0; v < number_vehicles; v++) {
+                vehiclesLoaded.get(r).add("LOAD");
+            }
         }
-        bolsTableReady=true;
+        bolsTableReady = true;
     }//GEN-LAST:event_getListedBOLsActionPerformed
 
-    
-    public String getBolsLoaded(int row) throws SQLException{
+    public String getBolsLoaded(int row) throws SQLException {
         return bolsLoaded.get(row);
     }
-    public String getVehiclesLoaded(int bol, int vehicle) throws SQLException{
+
+    public String getVehiclesLoaded(int bol, int vehicle) throws SQLException {
         return vehiclesLoaded.get(bol).get(vehicle);
-    }    
-    
-    public void loadDrivers(){
-        String driversSQL = "select D.FName || D.LName as \"Driver\", L.Region as \"Region\", L.Address as \"Address\""
-                + "from ((driver D inner join trailer T on D.DriID=T.DriID) inner join location L on L.LocID=T.LocID)";                
-        driversTableModel = new ResultSetTableModel(driversSQL);        
+    }
+
+    public void loadDrivers() {
+        String driversSQL = "select D.FName || ' ' || D.LName as \"Driver\", L.Region as \"Region\", L.Address as \"Address\""
+                + "from ((driver D inner join trailer T on D.DriID=T.DriID) inner join location L on L.LocID=T.LocID)";
+        driversTableModel = new ResultSetTableModel(driversSQL);
         driversTable.setModel(driversTableModel);
         selectedTable = "driversTable";
     }
-    
-    public void loadTrailers(){
-        String trailersSQL = "select D.FName || D.LName as \"Driver\", L.Region as \"Region\", L.Address as \"Address\", T.CCars-T.NCars as \"Car Space\", "
+
+    public void loadTrailers() {
+        String trailersSQL = "select D.FName || ' ' || D.LName as \"Driver\", L.Region as \"Region\", L.Address as \"Address\", T.CCars-T.NCars as \"Car Space\", "
                 + "T.CVans-T.NVans as \"Van Space\", T.CTrucks-T.NTrucks as \"Truck Space\" "
                 + "from ((driver D inner join trailer T on D.DriID=T.DriID) inner join location L on L.LocID=T.LocID) order by "
-                + "((CCars-NCars)+(CVans-NVans)+(CTrucks-NTrucks)) DESC";        
-        trailersTableModel = new ResultSetTableModel(trailersSQL);        
+                + "((CCars-NCars)+(CVans-NVans)+(CTrucks-NTrucks)) DESC";
+        trailersTableModel = new ResultSetTableModel(trailersSQL);
         trailersTable.setModel(trailersTableModel);
         selectedTable = "trailersTable";
-    }    
-    
-    
-           
-            
+    }
+
+
     private void bolsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bolsTableMouseClicked
         // TODO add your handling code here:        
         int row = bolsTable.rowAtPoint(evt.getPoint());
-        int col = bolsTable.columnAtPoint(evt.getPoint());        
-        if (row==selectedBOLRow || bolsTable.getRowCount()==0 || bolsTableReady==false){
-            canGetValue=false;
+        int col = bolsTable.columnAtPoint(evt.getPoint());
+        if (row == selectedBOLRow || bolsTable.getRowCount() == 0 || bolsTableReady == false) {
+            canGetValue = false;
             return;
         }
-        canGetValue=true;
-        selectedBOLRow=row;
+        canGetValue = true;
+        selectedBOLRow = row;
         selectedBOLIndex = row;
         System.out.println("bolTable row=" + row + ", col=" + col);
         if (col > 0) {
             String FName = bolsTable.getValueAt(row, 1).toString();
             String TName = bolsTable.getValueAt(row, 3).toString();
-            System.out.println("FName=" + FName + ", TName=" + TName);            
+            System.out.println("FName=" + FName + ", TName=" + TName);
             String bolVehiclesSQL = "SELECT '0' as \"LOAD/UNLOAD\", V.Vin, V.\"Year\", V.Make, V.Model FROM "
                     + "(((vehicle V natural join \"order\" O) inner join "
                     + "location L1 on O.P_ID=L1.LocID) inner join location L2 on O.D_ID=L2.LocID) "
@@ -635,17 +640,48 @@ public class CvatJFrame extends javax.swing.JFrame {
             bolsTable.setColumnSelectionInterval(1, bolsTable.getColumnCount() - 1);
         } else if (col == 0) {//IF LOAD/UNLOAD BUTTON CLICKED....
             System.out.println("CLICKED LOAD/UNLOAD BOL!!! bolsLoaded=" + bolsLoaded.get(row));
-            if (bolsLoaded.get(row).equals("LOAD")){
-                bolsLoaded.set(row,"UNLOAD");                
-            }            
-            else if (bolsLoaded.get(row).equals("UNLOAD")){
-                bolsLoaded.set(row,"LOAD");                
-            }                        
+            if (bolsLoaded.get(row).equals("LOAD")) {
+                bolsLoaded.set(row, "UNLOAD");
+            } else if (bolsLoaded.get(row).equals("UNLOAD")) {
+                bolsLoaded.set(row, "LOAD");
+            }
             selectedTable = "bolsTable";
             bolsTable.setModel(bolsTableModel);
             bolsTable.clearSelection();
         }
     }//GEN-LAST:event_bolsTableMouseClicked
+
+    private void bolVehiclesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bolVehiclesTableMouseClicked
+        // TODO add your handling code here:        
+        int row = bolVehiclesTable.rowAtPoint(evt.getPoint());
+        int col = bolVehiclesTable.columnAtPoint(evt.getPoint());
+        System.out.println("bolVehiclesTable row=" + row + ", col=" + col);
+        if (col == 0) {//IF LOAD/UNLOAD BUTTON CLICKED....
+            System.out.println("CLICKED LOAD/UNLOAD VEHICLE!!! vehiclesLoaded=" + vehiclesLoaded.get(selectedBOLIndex).get(row));
+            if (vehiclesLoaded.get(selectedBOLIndex).get(row).equals("LOAD")) {
+                vehiclesLoaded.get(selectedBOLIndex).set(row, "UNLOAD");              
+                //Vin, Year,Make, Model, Type,BOL_ID...
+                loadedVehiclesTable.setValueAt(selectedBOLRow + " UNLOAD",loadedVehiclesNextIndex,0);
+                loadedVehiclesTable.setValueAt(bolVehiclesTable.getValueAt(row, 1).toString(),loadedVehiclesNextIndex,1);
+                loadedVehiclesTable.setValueAt(bolVehiclesTable.getValueAt(row, 2).toString(),loadedVehiclesNextIndex,2);
+                loadedVehiclesTable.setValueAt(bolVehiclesTable.getValueAt(row, 3).toString(),loadedVehiclesNextIndex,3);
+                loadedVehiclesTable.setValueAt(bolVehiclesTable.getValueAt(row, 4).toString(),loadedVehiclesNextIndex,4);
+                loadedVehiclesNextIndex++;
+                selectedTable = "loadedVehiclesTable";
+                /*
+                loadedVehiclesList.get(loadedVehiclesList.size()-1).add(bolVehiclesTable.getValueAt(row, 1).toString());
+                loadedVehiclesList.get(loadedVehiclesList.size()-1).add(bolVehiclesTable.getValueAt(row, 2).toString());
+                loadedVehiclesList.get(loadedVehiclesList.size()-1).add(bolVehiclesTable.getValueAt(row, 3).toString());
+                loadedVehiclesList.get(loadedVehiclesList.size()-1).add(bolVehiclesTable.getValueAt(row, 4).toString());
+                */
+            } else if (vehiclesLoaded.get(selectedBOLIndex).get(row).equals("UNLOAD")) {
+                vehiclesLoaded.get(selectedBOLIndex).set(row, "LOAD");
+            }
+            selectedTable = "bolVehiclesTable";
+            bolVehiclesTable.setModel(bolVehiclesTableModel);
+        }
+
+    }//GEN-LAST:event_bolVehiclesTableMouseClicked
 
     /**
      * @param args the command line arguments
@@ -718,11 +754,11 @@ public class CvatJFrame extends javax.swing.JFrame {
     private javax.swing.JTable jTable4;
     private javax.swing.JTable jTable6;
     private javax.swing.JButton loadOut;
+    private javax.swing.JTable loadedVehiclesTable;
     private javax.swing.JComboBox<String> selectFromRegion;
     private javax.swing.JComboBox<String> selectToRegion;
     private javax.swing.JComboBox<String> selectedDriver;
     private javax.swing.JComboBox<String> selectedTrailer;
     private javax.swing.JTable trailersTable;
-    private javax.swing.JTable vehiclesTable;
     // End of variables declaration//GEN-END:variables
 }
