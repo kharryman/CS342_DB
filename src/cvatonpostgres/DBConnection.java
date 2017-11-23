@@ -18,14 +18,15 @@ public class DBConnection {
     public static Connection cnn = null;
     public static Statement stmt = null;
     public static CallableStatement cstmt;
-    public static String hostName = "Postgres"; 
+    public static String hostName = "postgres";
     public static String dbInstanceName = "cvat";   // database name.
-    public static String dbUser = "cvat", 
-            passwd = "c3m4p2s",
-            url = "jdbc:postgresql://localhost:5432/cvat";
+    public static String dbUser = "CS342";
+    public static String passwd = "c3m4p2s";
+    //public static String url = "jdbc:postgresql://delphi.cs.csub.edu:5432";
+    public static String url = "jdbc:oracle:thin:@delphi.cs.csubak.edu:1521:dbs01";
 
     public static boolean isConnected() {
-        return  ( cnn != null ) ;
+        return (cnn != null);
     }
 
     public static Connection getConnection() {
@@ -34,7 +35,7 @@ public class DBConnection {
             if (cnn != null && cnn.isValid(3)) {
                 return cnn;
             }
-            cnn = DriverManager.getConnection(url, dbUser, passwd ) ;
+            cnn = DriverManager.getConnection(url, dbUser, passwd);
             System.out.println("cnn=" + cnn);
             cnn.setAutoCommit(true);
             return cnn;
@@ -68,10 +69,10 @@ public class DBConnection {
         return vAllTables;
 
     }
-    
-     // The stored function getRecordCount() cannot be implemented in postgres due to dynamic sql statement
-     // "SELECT COUNT(*) INTO cnt FROM x_table" is not implemented. We have to use different way.
-     // A temporary method is used that will not work if a table is added or removed from database.
+
+    // The stored function getRecordCount() cannot be implemented in postgres due to dynamic sql statement
+    // "SELECT COUNT(*) INTO cnt FROM x_table" is not implemented. We have to use different way.
+    // A temporary method is used that will not work if a table is added or removed from database.
     public static int getRecordCountsOfAllTables() {
         try {
             cstmt = cnn.prepareCall("{ ? = call getRecordCount( ) }");
@@ -87,17 +88,20 @@ public class DBConnection {
     public static void resultSetToVector(ResultSet res, Vector<String> v) {
         try {
             String newName;
-            boolean save = true; 
+            boolean save = true;
             while (res.next()) {
-                 save = true;
-                 newName = res.getString(1);
-                 for ( int i = 0 ; i < v.size(); i ++) 
-                     if (newName.compareTo(v.get(i)) == 0 ) {
-                     save = false; 
-                     break;
+                save = true;
+                newName = res.getString(1);
+                for (int i = 0; i < v.size(); i++) {
+                    if (newName.compareTo(v.get(i)) == 0) {
+                        save = false;
+                        break;
                     }
-                if ( save ) v.add(newName) ;
-            } 
+                }
+                if (save) {
+                    v.add(newName);
+                }
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

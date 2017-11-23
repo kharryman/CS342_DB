@@ -555,10 +555,10 @@ public class CvatJFrame extends javax.swing.JFrame {
         String selectedTo = selectToRegion.getSelectedItem().toString();
         System.out.println("selectedFrom=" + selectedFrom + ", selectedTo=" + selectedTo);
         String bolSQL = "select '0' as \"LOAD/UNLOAD\", "
-                + "L1.Name as \"From Name\",L1.Address as \"From Address\", "
-                + "L2.Name as \"To Name\", L2.Address as \"To Address\", COUNT(V.VIN) as \"# VEHICLES\" from "
-                + "(((\"order\" O inner join location L1 on O.P_ID=L1.LocID) inner join location L2 on O.D_ID=L2.LocID) "
-                + "inner join vehicle V on O.OrdID=V.OrdID) where "
+                + "MIN(L1.Name) as \"From Name\", MIN(L1.Address) as \"From Address\", "
+                + "MIN(L2.Name) as \"To Name\",MIN(L2.Address) as \"To Address\", COUNT(V.VIN) as \"# VEHICLES\" from "
+                + "(((kdkh_order O inner join kdkh_location L1 on O.P_ID=L1.LocID) inner join kdkh_location L2 on O.D_ID=L2.LocID) "
+                + "inner join kdkh_vehicle V on O.OrdID=V.OrdID) where "
                 + "L1.Region='" + selectedFrom + "' and L2.Region='" + selectedTo + "' group by "
                 + "L1.LocID, L2.LocID";
         //String bolSQL = "select Name,Address from location";        
@@ -594,21 +594,23 @@ public class CvatJFrame extends javax.swing.JFrame {
     }
 
     public void loadDrivers() {
+                
         String driversSQL = "select D.FName || ' ' || D.LName as \"Driver\", L.Region as \"Region\", L.Address as \"Address\""
-                + "from ((driver D inner join trailer T on D.DriID=T.DriID) inner join location L on L.LocID=T.LocID)";
+                + "from ((kdkh_driver D inner join kdkh_trailer T on D.DriID=T.DriID) inner join kdkh_location L on L.LocID=T.LocID)";
         driversTableModel = new ResultSetTableModel(driversSQL);
         driversTable.setModel(driversTableModel);
         selectedTable = "driversTable";
+        
     }
 
     public void loadTrailers() {
-        String trailersSQL = "select D.FName || ' ' || D.LName as \"Driver\", L.Region as \"Region\", L.Address as \"Address\", T.CCars-T.NCars as \"Car Space\", "
-                + "T.CVans-T.NVans as \"Van Space\", T.CTrucks-T.NTrucks as \"Truck Space\" "
-                + "from ((driver D inner join trailer T on D.DriID=T.DriID) inner join location L on L.LocID=T.LocID) order by "
-                + "((CCars-NCars)+(CVans-NVans)+(CTrucks-NTrucks)) DESC";
+        
+        String trailersSQL = "select D.FName || ' ' || D.LName as \"Driver\", L.Region as \"Region\", L.Address as \"Address\" "
+                + "from ((kdkh_driver D inner join kdkh_trailer T on D.DriID=T.DriID) inner join kdkh_location L on L.LocID=T.LocID)";
         trailersTableModel = new ResultSetTableModel(trailersSQL);
         trailersTable.setModel(trailersTableModel);
         selectedTable = "trailersTable";
+        
     }
 
 
@@ -629,8 +631,8 @@ public class CvatJFrame extends javax.swing.JFrame {
             String TName = bolsTable.getValueAt(row, 3).toString();
             System.out.println("FName=" + FName + ", TName=" + TName);
             String bolVehiclesSQL = "SELECT '0' as \"LOAD/UNLOAD\", V.Vin, V.\"Year\", V.Make, V.Model FROM "
-                    + "(((vehicle V natural join \"order\" O) inner join "
-                    + "location L1 on O.P_ID=L1.LocID) inner join location L2 on O.D_ID=L2.LocID) "
+                    + "(((kdkh_vehicle V natural join kdkh_order O) inner join "
+                    + "kdkh_location L1 on O.P_ID=L1.LocID) inner join kdkh_location L2 on O.D_ID=L2.LocID) "
                     + "where L1.Name='" + FName + "' and L2.Name='" + TName + "'";
             bolVehiclesTableModel = new ResultSetTableModel(bolVehiclesSQL);
             //sorter = new TableRowSorter(bolTableModel);            
