@@ -8,6 +8,11 @@ package cvatonpostgres;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -17,6 +22,11 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * @author Keith Harryman
  */
 public class Helpers {
+    private CvatJFrame cvatJframe;
+    
+    public Helpers(CvatJFrame _cvatJFrame){
+        this.cvatJframe = _cvatJFrame;
+    }
 
     static void checkDataPath() {
         if (!new File(Globals.cvatData).exists()) {
@@ -63,4 +73,8 @@ public class Helpers {
         ta.append(String.format("\nFile [%s] contains %d lines.\n",
                 fileName.substring(fileName.lastIndexOf("/") + 1), cnt));
     }
+
+
+    
+    
 }

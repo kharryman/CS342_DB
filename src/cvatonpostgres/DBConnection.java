@@ -20,10 +20,11 @@ public class DBConnection {
     public static CallableStatement cstmt;
     public static String hostName = "postgres";
     public static String dbInstanceName = "cvat";   // database name.
-    public static String dbUser = "CS342";
+    public static String dbUser = "postgres";
     public static String passwd = "c3m4p2s";
     //public static String url = "jdbc:postgresql://delphi.cs.csub.edu:5432";
-    public static String url = "jdbc:oracle:thin:@delphi.cs.csubak.edu:1521:dbs01";
+    public static String url = "jdbc:postgresql://localhost:5432/cvat";
+    //public static String url = "jdbc:oracle:thin:@delphi.cs.csubak.edu:1521:dbs01";
 
     public static boolean isConnected() {
         return (cnn != null);

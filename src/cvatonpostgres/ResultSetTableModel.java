@@ -110,8 +110,10 @@ public class ResultSetTableModel extends AbstractTableModel {
             if (resultSet.isClosed() || cvatJframe.canGetValue==false) {
                 return null;
             }
+            System.out.println("row="+row +", relative row="+(row - currentRow));
             resultSet.relative(row - currentRow);
             currentRow = row;
+            
             //if (row != 0) {
                 if (col == 0) {
                     if (cvatJframe.selectedTable.equals("bolsTable")) {

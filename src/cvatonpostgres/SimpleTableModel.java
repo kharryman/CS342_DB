@@ -14,23 +14,36 @@ import javax.swing.table.AbstractTableModel;
  */
 public class SimpleTableModel extends AbstractTableModel{
     
-    SimpleTableModel(List<List<String>> table){        
-        
+    private List<List<String>> myTable;
+    private List<String> myColumns;
+    
+    SimpleTableModel(List<List<String>> myTable, List<String> columns){        
+        this.myTable = myTable;
+        this.myColumns = columns;
+    }
+    
+    @Override
+    public String getColumnName(int col) {
+       return this.myColumns.get(col);
     }
 
     @Override
     public int getRowCount() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+           return this.myTable.size();
     }
 
     @Override
     public int getColumnCount() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        int ret=0;
+        if (this.myTable.size()>0){
+           ret = this.myTable.get(0).size();
+        }
+        return ret;
     }
 
     @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public String getValueAt(int rowIndex, int columnIndex) {
+        return this.myTable.get(rowIndex).get(columnIndex);
     }
     
 }
