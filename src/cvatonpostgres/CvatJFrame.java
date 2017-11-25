@@ -48,16 +48,22 @@ public class CvatJFrame extends javax.swing.JFrame {
     TableCellRenderer defaultRenderer;
     List<String> bolsLoaded;
     List<List<String>> vehiclesLoaded;
+    List<String> vehiclesLoadedTrailer;
+
+    List<String> vehiclesLoadedVINs;
+
     List<List<String>> bolsTableList, vehiclesTableList, driversTableList, trailersTableList, vehiclesLoadedTableList;
     List<String> bolsColumns, vehiclesColumns, vehiclesLoadedColumns, trailersColumns, driversColumns;
+    List<Integer> trailerIDs;
 
-    static public String selectedTable = "bolsTable";
+    static public String selectedTable = "";
     static public int selectedBOLIndex;
     private int selectedBOLRow = -1;
-    static public boolean canGetValue = true, bolsTableReady = false;
-    public int loadedVehiclesNextIndex = 0;
+    private int selectedDriverIndex = -1, selectedTrailerIndex = -1;
+    private String selectedDriver = "", selectedTrailer = "";
 
     public Helpers h;
+    public CellRenderer cellRenderer;
 
     /**
      * Creates new form CvatJFrame
@@ -67,20 +73,24 @@ public class CvatJFrame extends javax.swing.JFrame {
         myFrame = this;
         h = new Helpers(this);
         initComponents();
+        cellRenderer = new CellRenderer();
         //cvatJFrame.setExtendedState(cvatJFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);        
         cvatJFrame.setSize(new Dimension(1700, 600));
         bolsLoaded = new ArrayList<String>();
         vehiclesLoaded = new ArrayList<List<String>>();
+        vehiclesLoadedTrailer = new ArrayList<String>();
+        vehiclesLoadedVINs = new ArrayList<String>();
 
         bolsTableList = new ArrayList<List<String>>();
         vehiclesTableList = new ArrayList<List<String>>();
         driversTableList = new ArrayList<List<String>>();
         trailersTableList = new ArrayList<List<String>>();
         vehiclesLoadedTableList = new ArrayList<List<String>>();
+
+        trailerIDs = new ArrayList<Integer>();
         selectedBOLIndex = 0;
+        bolVehiclesTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         setColumns();
-        loadDrivers();
-        loadTrailers();
 
     }
 
@@ -105,7 +115,17 @@ public class CvatJFrame extends javax.swing.JFrame {
         selectFromRegion = new javax.swing.JComboBox<>();
         selectToRegion = new javax.swing.JComboBox<>();
         jScrollPane5 = new javax.swing.JScrollPane();
-        loadedVehiclesTable = new javax.swing.JTable();
+        loadedVehiclesTable = new javax.swing.JTable(){
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component component = super.prepareRenderer(renderer, row, column);
+                int rendererWidth = component.getPreferredSize().width;
+                TableColumn tableColumn = getColumnModel().getColumn(column);
+                tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width, tableColumn.getPreferredWidth()));
+                return component;
+            }
+        };
+        ;
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
@@ -114,16 +134,53 @@ public class CvatJFrame extends javax.swing.JFrame {
         loadOut = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        trailersTable = new javax.swing.JTable();
+        trailersTable = new javax.swing.JTable(){
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component component = super.prepareRenderer(renderer, row, column);
+                int rendererWidth = component.getPreferredSize().width;
+                TableColumn tableColumn = getColumnModel().getColumn(column);
+                tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width, tableColumn.getPreferredWidth()));
+                return component;
+            }
+        };
+        ;
         jScrollPane3 = new javax.swing.JScrollPane();
-        driversTable = new javax.swing.JTable();
+        driversTable = new javax.swing.JTable(){
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component component = super.prepareRenderer(renderer, row, column);
+                int rendererWidth = component.getPreferredSize().width;
+                TableColumn tableColumn = getColumnModel().getColumn(column);
+                tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width, tableColumn.getPreferredWidth()));
+                return component;
+            }
+        };
+        ;
         jScrollPane7 = new javax.swing.JScrollPane();
-        bolVehiclesTable = new javax.swing.JTable();
-        jLabel3 = new javax.swing.JLabel();
+        bolVehiclesTable = new javax.swing.JTable(){
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component component = super.prepareRenderer(renderer, row, column);
+                int rendererWidth = component.getPreferredSize().width;
+                TableColumn tableColumn = getColumnModel().getColumn(column);
+                tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width, tableColumn.getPreferredWidth()));
+                return component;
+            }
+        };
+        ;
         jLabel5 = new javax.swing.JLabel();
         numberLoadedLabel = new javax.swing.JLabel();
         selectedBOLLabel = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
+        selectedBolLabel = new javax.swing.JLabel();
+        selectedDriverLabel = new javax.swing.JLabel();
+        selectedTrailerLabel = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
         BOLPanel = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -196,21 +253,27 @@ public class CvatJFrame extends javax.swing.JFrame {
 
         loadedVehiclesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "LOAD/UNLOAD", "VIN", "Year", "Make", "Model", "Size"
+                "#", "VIN", "Year", "Make", "Model", "Length", "Height"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+        });
+        loadedVehiclesTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        loadedVehiclesTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                loadedVehiclesTableMouseClicked(evt);
             }
         });
         jScrollPane5.setViewportView(loadedVehiclesTable);
@@ -238,17 +301,17 @@ public class CvatJFrame extends javax.swing.JFrame {
 
         trailersTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "Region", "Address", "Trailer ID", "Available compact", "Available mid-sized", "Available full-sized"
+                "Driver", "Region", "Address", "Top Space", "Bottom Space", "Bottom Height", "Loaded On"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -256,48 +319,61 @@ public class CvatJFrame extends javax.swing.JFrame {
             }
         });
         trailersTable.setToolTipText("");
+        trailersTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        trailersTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                trailersTableMouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(trailersTable);
 
         driversTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "Driver", "Driver ID", "Trailer ID", "Region", "Address"
+                "Driver", "Region", "Last Address"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+        });
+        driversTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
+        driversTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                driversTableMouseClicked(evt);
             }
         });
         jScrollPane3.setViewportView(driversTable);
 
         bolVehiclesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
             },
             new String [] {
-                "VIN", "Year", "Make", "Model", "Size"
+                "LOAD/UNLOAD", "VIN", "Year", "Make", "Model", "Length", "Height"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
         });
+        bolVehiclesTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         bolVehiclesTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 bolVehiclesTableMouseClicked(evt);
@@ -305,17 +381,54 @@ public class CvatJFrame extends javax.swing.JFrame {
         });
         jScrollPane7.setViewportView(bolVehiclesTable);
 
-        jLabel3.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        jLabel3.setText("Selected BOL#: ");
-
         jLabel5.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
         jLabel5.setText("Number Loaded:");
 
         numberLoadedLabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         numberLoadedLabel.setText("0");
 
+        jLabel3.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        jLabel3.setText("Selected BOL#: ");
+
         jLabel13.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
         jLabel13.setText("Vehicles");
+
+        selectedBolLabel.setText("0");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(selectedBolLabel)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel13)
+                .addContainerGap(41, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(33, 33, 33)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel13)
+                    .addComponent(selectedBolLabel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        selectedDriverLabel.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        selectedDriverLabel.setText("0");
+
+        selectedTrailerLabel.setText("0");
+
+        jLabel14.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        jLabel14.setText("Number Loaded Traiiler:");
+
+        jLabel15.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        jLabel15.setText("0");
 
         javax.swing.GroupLayout ListedPanelLayout = new javax.swing.GroupLayout(ListedPanel);
         ListedPanel.setLayout(ListedPanelLayout);
@@ -323,104 +436,127 @@ public class CvatJFrame extends javax.swing.JFrame {
             ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ListedPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(loadOut)
+                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(ListedPanelLayout.createSequentialGroup()
+                        .addGap(46, 46, 46)
                         .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 1739, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, ListedPanelLayout.createSequentialGroup()
+                                    .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(ListedPanelLayout.createSequentialGroup()
+                                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 781, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(27, 27, 27))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ListedPanelLayout.createSequentialGroup()
+                                            .addComponent(jLabel10)
+                                            .addGap(134, 134, 134)
+                                            .addComponent(jLabel9)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(selectFromRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(31, 31, 31)
+                                            .addComponent(jLabel8)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(selectToRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(106, 106, 106)))
+                                    .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(ListedPanelLayout.createSequentialGroup()
+                                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGap(338, 338, 338)
+                                            .addComponent(loadOut))
+                                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 641, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGap(0, 0, Short.MAX_VALUE)))
                             .addGroup(ListedPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jScrollPane5)
+                                    .addGroup(ListedPanelLayout.createSequentialGroup()
+                                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addGroup(ListedPanelLayout.createSequentialGroup()
+                                                .addComponent(jLabel5)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(numberLoadedLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                        .addGap(28, 28, 28)
+                                        .addComponent(jLabel14)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jLabel15)
+                                        .addGap(0, 0, Short.MAX_VALUE)))
                                 .addGap(18, 18, 18)
-                                .addComponent(getListedBOLs))
-                            .addGroup(ListedPanelLayout.createSequentialGroup()
-                                .addGap(46, 46, 46)
                                 .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(ListedPanelLayout.createSequentialGroup()
-                                        .addComponent(jLabel10)
-                                        .addGap(134, 134, 134)
-                                        .addComponent(jLabel9)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(selectFromRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(31, 31, 31)
-                                        .addComponent(jLabel8)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(selectToRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 781, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(ListedPanelLayout.createSequentialGroup()
-                                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 386, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGroup(ListedPanelLayout.createSequentialGroup()
-                                                    .addComponent(jLabel5)
-                                                    .addGap(18, 18, 18)
-                                                    .addComponent(numberLoadedLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                                        .addGap(45, 45, 45)
-                                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel12)
-                                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 442, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(ListedPanelLayout.createSequentialGroup()
-                                .addGap(38, 38, 38)
-                                .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 578, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(ListedPanelLayout.createSequentialGroup()
+                                        .addComponent(jLabel12)
+                                        .addGap(9, 9, 9)
+                                        .addComponent(selectedDriverLabel))
+                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
                                 .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 580, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(ListedPanelLayout.createSequentialGroup()
-                                .addGap(65, 65, 65)
-                                .addComponent(jLabel3)
-                                .addGap(18, 18, 18)
-                                .addComponent(selectedBOLLabel)
-                                .addGap(29, 29, 29)
-                                .addComponent(jLabel13)))))
-                .addContainerGap(410, Short.MAX_VALUE))
+                                    .addGroup(ListedPanelLayout.createSequentialGroup()
+                                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(selectedTrailerLabel))
+                                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 518, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(297, 297, 297))))
+                    .addGroup(ListedPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(getListedBOLs)))
+                .addGap(107, 107, 107)
+                .addComponent(selectedBOLLabel)
+                .addGap(881, 881, 881))
         );
         ListedPanelLayout.setVerticalGroup(
             ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ListedPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(getListedBOLs))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(ListedPanelLayout.createSequentialGroup()
                 .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ListedPanelLayout.createSequentialGroup()
+                        .addContainerGap(32, Short.MAX_VALUE)
+                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ListedPanelLayout.createSequentialGroup()
+                                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel10)
+                                        .addComponent(jLabel9)
+                                        .addComponent(selectFromRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(selectToRegion, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel8)
+                                        .addComponent(selectedBOLLabel)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ListedPanelLayout.createSequentialGroup()
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(22, 22, 22)))
+                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
+                            .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
                     .addGroup(ListedPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(getListedBOLs)))
-                    .addComponent(loadOut))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
-                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel10)
-                        .addComponent(jLabel9)
-                        .addComponent(selectFromRegion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(selectToRegion, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel8)
-                        .addComponent(jLabel3)
-                        .addComponent(selectedBOLLabel)
-                        .addComponent(jLabel13)))
+                        .addComponent(loadOut)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(numberLoadedLabel)
+                    .addComponent(jLabel12)
+                    .addComponent(jLabel4)
+                    .addComponent(selectedDriverLabel)
+                    .addComponent(selectedTrailerLabel)
+                    .addComponent(jLabel14)
+                    .addComponent(jLabel15))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ListedPanelLayout.createSequentialGroup()
-                        .addGap(43, 43, 43)
-                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(numberLoadedLabel)
-                            .addComponent(jLabel12))
-                        .addGap(7, 7, 7)
-                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(ListedPanelLayout.createSequentialGroup()
-                        .addGap(73, 73, 73)
-                        .addComponent(jLabel4)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(ListedPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(269, 269, 269))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(278, 278, 278))
         );
 
         jTabbedPane5.addTab("Listed", ListedPanel);
@@ -519,7 +655,7 @@ public class CvatJFrame extends javax.swing.JFrame {
                         .addComponent(jLabel6)
                         .addGap(66, 66, 66)
                         .addComponent(isActiveBOLs, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(978, Short.MAX_VALUE))
+                .addContainerGap(1806, Short.MAX_VALUE))
         );
         BOLPanelLayout.setVerticalGroup(
             BOLPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -536,7 +672,7 @@ public class CvatJFrame extends javax.swing.JFrame {
                     .addComponent(getPastBOLVehicles))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(256, Short.MAX_VALUE))
+                .addContainerGap(270, Short.MAX_VALUE))
         );
 
         jTabbedPane5.addTab("Place Order", BOLPanel);
@@ -545,11 +681,11 @@ public class CvatJFrame extends javax.swing.JFrame {
         ExportImportPanel.setLayout(ExportImportPanelLayout);
         ExportImportPanelLayout.setHorizontalGroup(
             ExportImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1955, Short.MAX_VALUE)
+            .addGap(0, 2783, Short.MAX_VALUE)
         );
         ExportImportPanelLayout.setVerticalGroup(
             ExportImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 829, Short.MAX_VALUE)
+            .addGap(0, 843, Short.MAX_VALUE)
         );
 
         jTabbedPane5.addTab("Export/Import", ExportImportPanel);
@@ -588,7 +724,9 @@ public class CvatJFrame extends javax.swing.JFrame {
         vehiclesTableList.clear();
         driversTableList.clear();
         trailersTableList.clear();
+        trailerIDs.clear();
         vehiclesLoadedTableList.clear();
+        vehiclesLoadedTrailer.clear();
 
         String selectedFrom = selectFromRegion.getSelectedItem().toString();
         String selectedTo = selectToRegion.getSelectedItem().toString();
@@ -620,7 +758,6 @@ public class CvatJFrame extends javax.swing.JFrame {
 
         bolsTableModel = new SimpleTableModel(bolsTableList, bolsColumns);
         bolsTable.setModel(bolsTableModel);
-        CellRenderer cellRenderer = new CellRenderer();
         bolsTable.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);
 
         //sorter = new TableRowSorter(bolTableModel);
@@ -633,21 +770,24 @@ public class CvatJFrame extends javax.swing.JFrame {
                 vehiclesLoaded.get(r).add("LOAD");
             }
         }
+        loadDrivers();
+        loadTrailers();
 
     }//GEN-LAST:event_getListedBOLsActionPerformed
 
 
     private void bolsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bolsTableMouseClicked
         bolsTable.setColumnSelectionInterval(1, bolsTable.getColumnCount() - 1);
+
         int row = bolsTable.rowAtPoint(evt.getPoint());
         int col = bolsTable.columnAtPoint(evt.getPoint());
         selectedBOLIndex = row;
-        selectedBOLLabel.setText(String.valueOf(row+1));
+        selectedBolLabel.setText(String.valueOf(row + 1));
         String FName = bolsTableList.get(row).get(1);
         String TName = bolsTableList.get(row).get(3);
         System.out.println("FName=" + FName + ", TName=" + TName);
 
-        String bolVehiclesSQL = "SELECT V.Vin, V.\"Year\", V.Make, V.Model FROM "
+        String bolVehiclesSQL = "SELECT V.Vin, V.\"Year\", V.Make, V.Model, V.\"Length\", V.Height FROM "
                 + "(((vehicle V natural join \"order\" O) inner join "
                 + "location L1 on O.P_ID=L1.LocID) inner join location L2 on O.D_ID=L2.LocID) "
                 + "where L1.Name='" + FName + "' and L2.Name='" + TName + "'";
@@ -668,18 +808,22 @@ public class CvatJFrame extends javax.swing.JFrame {
                     boolean exists = false;
                     for (int vl = 0; vl < vehiclesLoadedTableList.size(); vl++) {
                         //IF VINs are equal..then remove
-                        if (vehiclesLoadedTableList.get(vl).get(0).equals(vehiclesTableList.get(i).get(1))) {
+                        if (vehiclesLoadedTableList.get(vl).get(1).equals(vehiclesTableList.get(i).get(1))) {
                             exists = true;
                         }
                     }
                     if (!exists) {
                         vehiclesLoadedTableList.add(new ArrayList<String>());
-                        vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(String.valueOf(selectedBOLIndex + 1));
+                        //SET THIS TO LOAD FOR LOAD ONTO TRAILER WHEN ADDED TO 'LoadedList'
+                        vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(String.valueOf(selectedBOLIndex + 1) + " LOAD");
                         vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(vehiclesTableList.get(i).get(1));
                         vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(vehiclesTableList.get(i).get(2));
                         vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(vehiclesTableList.get(i).get(3));
                         vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(vehiclesTableList.get(i).get(4));
+                        vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(vehiclesTableList.get(i).get(5));
+                        vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(vehiclesTableList.get(i).get(6));
                     }
+                    vehiclesLoadedTrailer.add("LOAD");
 
                 }
             } else if (bolsLoaded.get(row).equals("UNLOAD")) {
@@ -692,6 +836,7 @@ public class CvatJFrame extends javax.swing.JFrame {
                         //IF VINs are equal..then remove
                         if (vehiclesLoadedTableList.get(vl).get(1).equals(vehiclesTableList.get(i).get(1))) {
                             vehiclesLoadedTableList.remove(vl);
+                            vehiclesLoadedTrailer.remove(vl);
                         }
                     }
                 }
@@ -699,7 +844,7 @@ public class CvatJFrame extends javax.swing.JFrame {
             vehiclesLoadedTableModel = new SimpleTableModel(vehiclesLoadedTableList, vehiclesLoadedColumns);
             loadedVehiclesTable.setModel(vehiclesLoadedTableModel);
             if (vehiclesLoadedTableList.size() > 0) {
-
+                loadedVehiclesTable.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);
                 TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(loadedVehiclesTable.getModel());
                 loadedVehiclesTable.setRowSorter(sorter);
                 List<RowSorter.SortKey> sortKeys = new ArrayList<>(10);
@@ -712,7 +857,6 @@ public class CvatJFrame extends javax.swing.JFrame {
 
         bolVehiclesTableModel = new SimpleTableModel(vehiclesTableList, vehiclesColumns);
 
-        CellRenderer cellRenderer = new CellRenderer();
         System.out.println("BEFORE SET VECHICLE RENDERER");
         bolVehiclesTable.setModel(bolVehiclesTableModel);
         bolVehiclesTable.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);
@@ -722,7 +866,6 @@ public class CvatJFrame extends javax.swing.JFrame {
 
     private void bolVehiclesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bolVehiclesTableMouseClicked
         // TODO add your handling code here:        
-
         int row = bolVehiclesTable.rowAtPoint(evt.getPoint());
         int col = bolVehiclesTable.columnAtPoint(evt.getPoint());
         if (col == 0) {//IF LOAD/UNLOAD BUTTON CLICKED....
@@ -734,11 +877,15 @@ public class CvatJFrame extends javax.swing.JFrame {
 
                 vehiclesLoadedTableList.add(new ArrayList<String>());
                 System.out.println("vehiclesTableList=" + vehiclesTableList.size());
-                vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(String.valueOf(selectedBOLIndex + 1));
+                vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(String.valueOf(selectedBOLIndex + 1) + " LOAD");
                 vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(vehiclesTableList.get(row).get(1));
                 vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(vehiclesTableList.get(row).get(2));
                 vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(vehiclesTableList.get(row).get(3));
                 vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(vehiclesTableList.get(row).get(4));
+                vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(vehiclesTableList.get(row).get(5));
+                vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(vehiclesTableList.get(row).get(6));
+
+                vehiclesLoadedTrailer.add("LOAD");
             } else if (vehiclesLoaded.get(selectedBOLIndex).get(row).equals("UNLOAD")) {
                 vehiclesLoaded.get(selectedBOLIndex).set(row, "LOAD");
                 vehiclesTableList.get(row).set(0, (row + 1) + " LOAD");
@@ -746,12 +893,14 @@ public class CvatJFrame extends javax.swing.JFrame {
                     //IF VINs are equal:
                     if (vehiclesLoadedTableList.get(vl).get(1).equals(vehiclesTableList.get(row).get(1))) {
                         vehiclesLoadedTableList.remove(vl);
+                        vehiclesLoadedTrailer.remove(vl);
                     }
                 }
             }
             vehiclesLoadedTableModel = new SimpleTableModel(vehiclesLoadedTableList, vehiclesLoadedColumns);
             loadedVehiclesTable.setModel(vehiclesLoadedTableModel);
             if (vehiclesLoadedTableList.size() > 0) {
+                loadedVehiclesTable.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);
                 TableRowSorter<TableModel> sorter = new TableRowSorter<TableModel>(loadedVehiclesTable.getModel());
                 loadedVehiclesTable.setRowSorter(sorter);
                 List<RowSorter.SortKey> sortKeys = new ArrayList<>(10);
@@ -760,40 +909,100 @@ public class CvatJFrame extends javax.swing.JFrame {
             }
 
             numberLoadedLabel.setText(String.valueOf(vehiclesLoadedTableList.size()));
-
             bolVehiclesTableModel = new SimpleTableModel(vehiclesTableList, vehiclesColumns);
-            CellRenderer cellRenderer = new CellRenderer();
             bolVehiclesTable.setModel(bolVehiclesTableModel);
             bolVehiclesTable.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);
-            
-            boolean is_all_loaded=true;
-            boolean is_all_unloaded=true;
-            for (int i=0;i<vehiclesLoaded.get(selectedBOLIndex).size();i++){
-                if(vehiclesLoaded.get(selectedBOLIndex).get(i).equals("LOAD")){
+
+            boolean is_all_loaded = true;
+            boolean is_all_unloaded = true;
+            for (int i = 0; i < vehiclesLoaded.get(selectedBOLIndex).size(); i++) {
+                if (vehiclesLoaded.get(selectedBOLIndex).get(i).equals("LOAD")) {
                     is_all_unloaded = false;
-                }else{
+                } else {
                     is_all_loaded = false;
                 }
             }
-            if (is_all_loaded){
+            if (is_all_loaded) {
                 System.out.println(selectedBOLIndex + " IS ALL LOADED");
-                bolsLoaded.set(selectedBOLIndex,"LOAD");
-                bolsTableList.get(selectedBOLIndex).set(0,(selectedBOLIndex+1)+ " LOAD");
-            }
-            else if (is_all_unloaded){
+                bolsLoaded.set(selectedBOLIndex, "LOAD");
+                bolsTableList.get(selectedBOLIndex).set(0, (selectedBOLIndex + 1) + " LOAD");
+            } else if (is_all_unloaded) {
                 System.out.println(selectedBOLIndex + " IS ALL UNLOADED");
-                bolsLoaded.set(selectedBOLIndex,"UNLOAD");
-                bolsTableList.get(selectedBOLIndex).set(0,(selectedBOLIndex+1)+ " UNLOAD");
-            }            
+                bolsLoaded.set(selectedBOLIndex, "UNLOAD");
+                bolsTableList.get(selectedBOLIndex).set(0, (selectedBOLIndex + 1) + " UNLOAD");
+            }
+
             bolsTableModel = new SimpleTableModel(bolsTableList, bolsColumns);
             bolsTable.setModel(bolsTableModel);
-            bolsTable.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);                        
+            bolsTable.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);
         }
     }//GEN-LAST:event_bolVehiclesTableMouseClicked
+
+    private void driversTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_driversTableMouseClicked
+        selectedDriverIndex = driversTable.rowAtPoint(evt.getPoint());
+        selectedDriverLabel.setText(driversTableList.get(selectedDriverIndex).get(1));
+
+    }//GEN-LAST:event_driversTableMouseClicked
+
+    private void trailersTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_trailersTableMouseClicked
+        selectedTrailerIndex = driversTable.rowAtPoint(evt.getPoint());
+        selectedTrailerLabel.setText(String.valueOf(selectedTrailerIndex + 1));
+    }//GEN-LAST:event_trailersTableMouseClicked
+
+    private void loadedVehiclesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loadedVehiclesTableMouseClicked
+        int row = loadedVehiclesTable.rowAtPoint(evt.getPoint());
+        int col = loadedVehiclesTable.columnAtPoint(evt.getPoint());
+        if (col == 0) {            
+            //CHECK THAT TRAILER AND DRIVER ARE SELECTED...            
+            if (selectedDriverIndex == -1 || selectedTrailerIndex == -1) {
+                h.infoMessage("DRIVER AND/OR TRAILER NOT SELECTED");
+                return;
+            }
+            String whichLevel = h.infoBox();
+            System.out.println("YOU SELECTED " + whichLevel);
+            /*
+            //TOP LENGTH: 4, BOTOM LENGTH:5, BOTTOM HEIGHT: 6
+            System.out.println("selectedTrailerIndex=" + selectedTrailerIndex + ", trailersTableList size=" + trailersTableList.size() + ", num cols=" + trailersTableList.get(selectedTrailerIndex).size());
+            int tLSpace = Integer.parseInt(trailersTableList.get(selectedTrailerIndex).get(4));
+            int bLSpace = Integer.parseInt(trailersTableList.get(selectedTrailerIndex).get(5));
+            int bHeight = Integer.parseInt(trailersTableList.get(selectedTrailerIndex).get(6));
+            //VEHICLE LENGTH: 6, VEHICLE HEIGHT: 7
+            int vLength = Integer.parseInt(vehiclesLoadedTableList.get(row).get(6));
+            int vHeight = Integer.parseInt(vehiclesLoadedTableList.get(row).get(7));
+            //NOW TEST IF POSSIBLE TO LOAD......:
+            if (tLSpace >= vLength || (bLSpace >= vLength && bHeight > vHeight)) {
+                if (vehiclesLoadedTrailer.get(row).equals("LOAD")) {
+                    vehiclesLoadedTrailer.set(row, "UNLOAD");
+                    vehiclesLoadedTableList.get(row).set(0, vehiclesLoadedTableList.get(row).get(0).split(" ")[0] + " UNLOAD");
+                    vehiclesLoadedVINs.add(vehiclesLoadedTableList.get(row).get(1));//ADD THE VIN
+                } else {//FOR UNLOAD TRAILER:
+                    vehiclesLoadedTrailer.set(row, "LOAD");
+                    vehiclesLoadedTableList.get(row).set(0, vehiclesLoadedTableList.get(row).get(0).split(" ")[0] + " LOAD");
+                    for (int i = 0; i < vehiclesLoadedVINs.size(); i++) {
+                        if (vehiclesLoadedVINs.get(i).equals(vehiclesLoadedTableList.get(row).get(1))) {
+                            vehiclesLoadedVINs.remove(i);
+                        }
+                    }
+                }
+                vehiclesLoadedTableModel = new SimpleTableModel(vehiclesLoadedTableList, vehiclesLoadedColumns);
+                loadedVehiclesTable.setModel(vehiclesLoadedTableModel);
+                loadedVehiclesTable.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);
+            }
+            else{
+                Helpers.infoBox("WON'T FIT","");
+                return;
+            }
+            */
+
+        }
+
+    }//GEN-LAST:event_loadedVehiclesTableMouseClicked
     public void loadDrivers() {
 
+        String selectedFrom = selectFromRegion.getSelectedItem().toString();
         String driversSQL = "select D.FName || ' ' || D.LName as \"Driver\", L.Region as \"Region\", L.Address as \"Address\""
-                + "from ((driver D inner join trailer T on D.DriID=T.DriID) inner join location L on L.LocID=T.LocID)";
+                + " from ((driver D inner join trailer T on D.DriID=T.DriID) inner join location L on L.LocID=T.LocID and L.Region='" + selectedFrom + "')"
+                + "  order by D.FName";
 
         driversTableList = loadDrivers(driversSQL);
         driversTableModel = new SimpleTableModel(driversTableList, driversColumns);
@@ -802,9 +1011,11 @@ public class CvatJFrame extends javax.swing.JFrame {
     }
 
     public void loadTrailers() {
-
-        String trailersSQL = "select D.FName || ' ' || D.LName as \"Driver\", L.Region as \"Region\", L.Address as \"Address\" "
-                + "from ((driver D inner join trailer T on D.DriID=T.DriID) inner join location L on L.LocID=T.LocID)";
+        String selectedFrom = selectFromRegion.getSelectedItem().toString();
+        //NEED TO GET AVAILABLE SPACE:
+        String trailersSQL = "select T.TraID, D.FName || ' ' || D.LName as \"Driver\", L.Region as \"Region\", L.Address as \"Address\", "
+                + "(T.TLength-T.TUsed) AS \"Top Space\", (T.BLength-T.BUsed) AS \"Bottom Space\", T.BHeight, T.LoadedOn from ((driver D inner join trailer T on D.DriID=T.DriID) inner join location L on L.LocID=T.LocID"
+                + " and L.Region='" + selectedFrom + "') order by D.FName";
         driversTableList = loadTrailers(trailersSQL);
         trailersTableModel = new SimpleTableModel(driversTableList, trailersColumns);
         trailersTable.setModel(trailersTableModel);
@@ -839,7 +1050,7 @@ public class CvatJFrame extends javax.swing.JFrame {
         return bolsList;
     }
 
-    static List<List<String>> loadDrivers(String sql) {
+    public List<List<String>> loadDrivers(String sql) {
 
         List<List<String>> driversList = new ArrayList<List<String>>();
         try {  // In Java resultset, the first row is numbered 0 and 
@@ -848,8 +1059,10 @@ public class CvatJFrame extends javax.swing.JFrame {
             //From Name, From Address, To Name, To Address, #Vehicles
 
             //------------------------------------------------------
+            int driver_ct = 1;
             while (rs.next()) {
                 driversList.add(new ArrayList<String>());
+                driversList.get(driversList.size() - 1).add(String.valueOf(driver_ct++));
                 driversList.get(driversList.size() - 1).add(rs.getString(1));
                 driversList.get(driversList.size() - 1).add(rs.getString(2));
                 driversList.get(driversList.size() - 1).add(rs.getString(3));
@@ -863,7 +1076,7 @@ public class CvatJFrame extends javax.swing.JFrame {
         return driversList;
     }
 
-    static List<List<String>> loadTrailers(String sql) {
+    public List<List<String>> loadTrailers(String sql) {
 
         List<List<String>> trailersList = new ArrayList<List<String>>();
         try {  // In Java resultset, the first row is numbered 0 and 
@@ -872,11 +1085,18 @@ public class CvatJFrame extends javax.swing.JFrame {
             //From Name, From Address, To Name, To Address, #Vehicles
 
             //------------------------------------------------------
+            int trailer_ct = 1;
             while (rs.next()) {
                 trailersList.add(new ArrayList<String>());
-                trailersList.get(trailersList.size() - 1).add(rs.getString(1));
+                trailersList.get(trailersList.size() - 1).add(String.valueOf(trailer_ct++));
+                trailerIDs.add(rs.getInt(1));
                 trailersList.get(trailersList.size() - 1).add(rs.getString(2));
                 trailersList.get(trailersList.size() - 1).add(rs.getString(3));
+                trailersList.get(trailersList.size() - 1).add(rs.getString(4));
+                trailersList.get(trailersList.size() - 1).add(rs.getString(5));
+                trailersList.get(trailersList.size() - 1).add(rs.getString(6));
+                trailersList.get(trailersList.size() - 1).add(rs.getString(7));
+                trailersList.get(trailersList.size() - 1).add(rs.getString(8));
             }
             rs.close();
 
@@ -904,6 +1124,8 @@ public class CvatJFrame extends javax.swing.JFrame {
                 vehiclesList.get(vehiclesList.size() - 1).add(rs.getString(2));
                 vehiclesList.get(vehiclesList.size() - 1).add(rs.getString(3));
                 vehiclesList.get(vehiclesList.size() - 1).add(rs.getString(4));
+                vehiclesList.get(vehiclesList.size() - 1).add(rs.getString(5));
+                vehiclesList.get(vehiclesList.size() - 1).add(rs.getString(6));
             }
             rs.close();
 
@@ -923,12 +1145,30 @@ public class CvatJFrame extends javax.swing.JFrame {
         bolsColumns.add("To Address");
         bolsColumns.add("# Vehicles");
 
+        driversColumns = new ArrayList<String>();
+        driversColumns.add("#");
+        driversColumns.add("Driver");
+        driversColumns.add("Region");
+        driversColumns.add("Last Address");
+
+        trailersColumns = new ArrayList<String>();
+        trailersColumns.add("#");
+        trailersColumns.add("Driver");
+        trailersColumns.add("Region");
+        trailersColumns.add("Address");
+        trailersColumns.add("Top Space");
+        trailersColumns.add("Bottom Space");
+        trailersColumns.add("Bottom Height");
+        trailersColumns.add("Loaded On");
+
         vehiclesLoadedColumns = new ArrayList<String>();
         vehiclesLoadedColumns.add("#");
         vehiclesLoadedColumns.add("VIN");
         vehiclesLoadedColumns.add("Year");
         vehiclesLoadedColumns.add("Make");
         vehiclesLoadedColumns.add("Model");
+        vehiclesLoadedColumns.add("Length");
+        vehiclesLoadedColumns.add("Height");
 
         vehiclesColumns = new ArrayList<String>();
         vehiclesColumns.add("LOAD/UNLOAD");
@@ -936,16 +1176,8 @@ public class CvatJFrame extends javax.swing.JFrame {
         vehiclesColumns.add("Year");
         vehiclesColumns.add("Make");
         vehiclesColumns.add("Model");
-
-        trailersColumns = new ArrayList<String>();
-        trailersColumns.add("Driver");
-        trailersColumns.add("Region");
-        trailersColumns.add("Address");
-
-        driversColumns = new ArrayList<String>();
-        driversColumns.add("Driver");
-        driversColumns.add("Region");
-        driversColumns.add("Address");
+        vehiclesColumns.add("Length");
+        vehiclesColumns.add("Height");
 
     }
 
@@ -1001,6 +1233,8 @@ public class CvatJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1009,6 +1243,7 @@ public class CvatJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -1016,6 +1251,7 @@ public class CvatJFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane5;
@@ -1027,6 +1263,9 @@ public class CvatJFrame extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> selectFromRegion;
     private javax.swing.JComboBox<String> selectToRegion;
     private javax.swing.JLabel selectedBOLLabel;
+    private javax.swing.JLabel selectedBolLabel;
+    private javax.swing.JLabel selectedDriverLabel;
+    private javax.swing.JLabel selectedTrailerLabel;
     private javax.swing.JTable trailersTable;
     // End of variables declaration//GEN-END:variables
 }

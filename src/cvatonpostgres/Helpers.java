@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -74,7 +75,18 @@ public class Helpers {
                 fileName.substring(fileName.lastIndexOf("/") + 1), cnt));
     }
 
+    public String infoBox()
+    {
+        String[] values = {"BOTTOM", "TOP"};
+        //JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
+        Object selected = JOptionPane.showInputDialog(null, "LOAD TOP OR BOTTOM?", "Selection", JOptionPane.DEFAULT_OPTION, null, values, 0);
+        return selected.toString();
+    }
+    
+    public void infoMessage(String title){
+        JOptionPane.showMessageDialog(null, "", title, JOptionPane.INFORMATION_MESSAGE);       
+        
+    }
+    
 
-    
-    
 }

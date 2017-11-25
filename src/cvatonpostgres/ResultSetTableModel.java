@@ -106,32 +106,6 @@ public class ResultSetTableModel extends AbstractTableModel {
     }
 
     public String getValueAt(int row, int col) {
-        try {
-            if (resultSet.isClosed() || cvatJframe.canGetValue==false) {
-                return null;
-            }
-            System.out.println("row="+row +", relative row="+(row - currentRow));
-            resultSet.relative(row - currentRow);
-            currentRow = row;
-            
-            //if (row != 0) {
-                if (col == 0) {
-                    if (cvatJframe.selectedTable.equals("bolsTable")) {
-                        return (row + 1) + " " + cvatJframe.getBolsLoaded(row);
-                    } else if (cvatJframe.selectedTable.equals("bolVehiclesTable")) {          
-                        System.out.println("bol index="+cvatJframe.selectedBOLIndex+",vehicle="+row);
-                        return (row + 1) + " " + cvatJframe.getVehiclesLoaded(cvatJframe.selectedBOLIndex, row);
-                    }
-                    else{
-                        return resultSet.getString(col+1);
-                    }
-                } else {                                        
-                    return resultSet.getString(col+1);
-                }
-            //}
-        } catch (SQLException e) { //System.out.printf("Error in getValue(%d, %d)\n", row, col); 
-            e.printStackTrace();
-        }
         return "";
     }
 
