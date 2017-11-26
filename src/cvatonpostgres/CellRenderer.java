@@ -23,12 +23,9 @@ public class CellRenderer extends DefaultTableCellRenderer {
         Component cell = super.getTableCellRendererComponent(table, obj, isSelected, hasFocus, row, column);
         //if (cvatJFrame.myFrame.selectedTable.equals("bolsTable") || cvatJFrame.myFrame.selectedTable.equals("bolVehiclesTable")  || cvatJFrame.myFrame.selectedTable.equals("loadedVehiclesTable")) {
             
-            System.out.println("AFTER SET VECHICLE RENDERER?");
             if (obj.toString().split(" ")[1].toUpperCase().equals("LOAD")) {
-                System.out.println("SETTING VEHCILE TO CYAN...");
                 cell.setBackground(Color.CYAN);
             } else if (obj.toString().split(" ")[1].toUpperCase().equals("UNLOAD")) {
-                System.out.println("SETTING VEHCILE TO GRAY...");
                 cell.setBackground(Color.LIGHT_GRAY);
             } 
             cell.setForeground(Color.black);

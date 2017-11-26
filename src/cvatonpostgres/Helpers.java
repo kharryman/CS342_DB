@@ -79,8 +79,8 @@ public class Helpers {
     {
         String[] values = {"BOTTOM", "TOP"};
         //JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
-        Object selected = JOptionPane.showInputDialog(null, "LOAD TOP OR BOTTOM?", "Selection", JOptionPane.DEFAULT_OPTION, null, values, 0);
-        return selected.toString();
+        Object selected = JOptionPane.showInputDialog(null, "LOAD TOP OR BOTTOM?", "Selection", JOptionPane.DEFAULT_OPTION, null, values, 0);        
+        return (String)selected;
     }
     
     public void infoMessage(String title){
