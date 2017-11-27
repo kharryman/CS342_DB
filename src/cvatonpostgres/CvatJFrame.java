@@ -15,9 +15,11 @@ import java.sql.Array;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -30,9 +32,16 @@ import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.table.TableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -43,22 +52,17 @@ public class CvatJFrame extends javax.swing.JFrame {
     static private JPanel myListedPanel;
     static public JFrame cvatJFrame;
     static public CvatJFrame myFrame;
-    SimpleTableModel bolsTableModel = null, bolVehiclesTableModel = null, driversTableModel, trailersTableModel, vehiclesLoadedTableModel;
+    SimpleTableModel bolsTableModel = null, bolVehiclesTableModel = null, driversTableModel, trailersTableModel, vehiclesLoadedTableModel = null, assignedBolsTableModel = null;
     TableRowSorter sorter = null;
     TableCellRenderer defaultRenderer;
     List<String> bolsLoaded;
     List<List<String>> vehiclesLoaded;
     List<String> vehiclesLoadedTrailer;
+    List<List<String>> vehiclesLoadedVINs;
 
-    List<String[]> vehiclesLoadedVINs;
-
-    List<List<String>> bolsTableList, vehiclesTableList, driversTableList, trailersTableList, vehiclesLoadedTableList;
-    List<String> bolsColumns, vehiclesColumns, vehiclesLoadedColumns, trailersColumns, driversColumns;
+    List<List<String>> bolsTableList, vehiclesTableList, driversTableList, trailersTableList, vehiclesLoadedTableList, assignedBolsTableList;
+    List<String> bolsColumns, vehiclesColumns, vehiclesLoadedColumns, trailersColumns, driversColumns, assignedBOLColumns;
     List<Integer> trailerIDs;
-    
-    public List<JOB> myJOBs;
-    public List<BOL> myBOLs;
-    public J
 
     static public String selectedTable = "";
     static public int selectedBOLIndex;
@@ -70,7 +74,14 @@ public class CvatJFrame extends javax.swing.JFrame {
 
     public Helpers h;
     public CellRenderer cellRenderer;
-    private String savedFrom, savedTo;
+    private String savedDriver, savedFrom, savedTo;
+    private int savedBUsed, savedTUsed, savedBLength, savedTLength, savedBHeight;
+    private List<Boolean> myBolIndexes;
+
+    private List<Integer> driver_ids, pids, dids, jobids, bolids, splitids;
+    private Integer selectedDriverID;
+    
+    private HashMap reportMap;
 
     /**
      * Creates new form CvatJFrame
@@ -80,6 +91,7 @@ public class CvatJFrame extends javax.swing.JFrame {
         myFrame = this;
         h = new Helpers(this);
         initComponents();
+        loadBolsPanel();
         cellRenderer = new CellRenderer();
         hasTrailer = "N";
         //cvatJFrame.setExtendedState(cvatJFrame.getExtendedState() | JFrame.MAXIMIZED_BOTH);        
@@ -87,13 +99,23 @@ public class CvatJFrame extends javax.swing.JFrame {
         bolsLoaded = new ArrayList<String>();
         vehiclesLoaded = new ArrayList<List<String>>();
         vehiclesLoadedTrailer = new ArrayList<String>();
-        vehiclesLoadedVINs = new ArrayList<String[]>();
+        vehiclesLoadedVINs = new ArrayList<List<String>>();
+
+        myBolIndexes = new ArrayList<Boolean>();
 
         bolsTableList = new ArrayList<List<String>>();
         vehiclesTableList = new ArrayList<List<String>>();
         driversTableList = new ArrayList<List<String>>();
         trailersTableList = new ArrayList<List<String>>();
         vehiclesLoadedTableList = new ArrayList<List<String>>();
+        assignedBolsTableList = new ArrayList<List<String>>();
+
+        driver_ids = new ArrayList<Integer>();
+        pids = new ArrayList<Integer>();
+        dids = new ArrayList<Integer>();
+        jobids  = new ArrayList<Integer>();
+        bolids = new ArrayList<Integer>();
+        splitids = new ArrayList<Integer>();
 
         trailerIDs = new ArrayList<Integer>();
         selectedBOLIndex = 0;
@@ -115,16 +137,6 @@ public class CvatJFrame extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jTabbedPane2 = new javax.swing.JTabbedPane();
         jTabbedPane5 = new javax.swing.JTabbedPane();
-        BOLPanel = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        jTable4 = new javax.swing.JTable();
-        isActiveBOLs = new javax.swing.JCheckBox();
-        jLabel11 = new javax.swing.JLabel();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        jTable6 = new javax.swing.JTable();
-        getPastBOLVehicles = new javax.swing.JButton();
-        ExportImportPanel = new javax.swing.JPanel();
         ListedPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         getListedBOLs = new javax.swing.JButton();
@@ -199,139 +211,24 @@ public class CvatJFrame extends javax.swing.JFrame {
         selectedTrailerLabel = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         loadedTrailerLabel = new javax.swing.JLabel();
+        BOLPanel = new javax.swing.JPanel();
+        assignedBOLsPanel = new javax.swing.JPanel();
+        getAssignedBOLs = new javax.swing.JButton();
+        jScrollPane8 = new javax.swing.JScrollPane();
+        assignedBOLsTable = new javax.swing.JTable(){
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                Component component = super.prepareRenderer(renderer, row, column);
+                int rendererWidth = component.getPreferredSize().width;
+                TableColumn tableColumn = getColumnModel().getColumn(column);
+                tableColumn.setPreferredWidth(Math.max(rendererWidth + getIntercellSpacing().width, tableColumn.getPreferredWidth()));
+                return component;
+            }
+        };
 
         jLabel1.setText("jLabel1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel6.setText("ASSIGNED BOlS");
-
-        jTable4.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "Driver", "BOL ID", "Status", "Number Vehicles", "Pickup Name", "Pickup Address", "Dropoff Name", "Dropoff Address"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        jScrollPane4.setViewportView(jTable4);
-
-        isActiveBOLs.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        isActiveBOLs.setText("Active(Not delivered) BOLs");
-        isActiveBOLs.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                isActiveBOLsActionPerformed(evt);
-            }
-        });
-
-        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jLabel11.setText("Vehicles");
-
-        jTable6.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "VIN", "Year", "Make", "Model"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane6.setViewportView(jTable6);
-        if (jTable6.getColumnModel().getColumnCount() > 0) {
-            jTable6.getColumnModel().getColumn(0).setResizable(false);
-            jTable6.getColumnModel().getColumn(1).setResizable(false);
-            jTable6.getColumnModel().getColumn(2).setResizable(false);
-            jTable6.getColumnModel().getColumn(3).setResizable(false);
-        }
-
-        getPastBOLVehicles.setFont(new java.awt.Font("DialogInput", 0, 11)); // NOI18N
-        getPastBOLVehicles.setText("Get BOL's Vehicles");
-        getPastBOLVehicles.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                getPastBOLVehiclesActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout BOLPanelLayout = new javax.swing.GroupLayout(BOLPanel);
-        BOLPanel.setLayout(BOLPanelLayout);
-        BOLPanelLayout.setHorizontalGroup(
-            BOLPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(BOLPanelLayout.createSequentialGroup()
-                .addGap(54, 54, 54)
-                .addGroup(BOLPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 893, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(BOLPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel11)
-                        .addGap(28, 28, 28)
-                        .addComponent(getPastBOLVehicles))
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 923, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(BOLPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addGap(66, 66, 66)
-                        .addComponent(isActiveBOLs, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(1806, Short.MAX_VALUE))
-        );
-        BOLPanelLayout.setVerticalGroup(
-            BOLPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(BOLPanelLayout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addGroup(BOLPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(isActiveBOLs))
-                .addGap(24, 24, 24)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(BOLPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel11)
-                    .addComponent(getPastBOLVehicles))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(270, Short.MAX_VALUE))
-        );
-
-        jTabbedPane5.addTab("Place Order", BOLPanel);
-
-        javax.swing.GroupLayout ExportImportPanelLayout = new javax.swing.GroupLayout(ExportImportPanel);
-        ExportImportPanel.setLayout(ExportImportPanelLayout);
-        ExportImportPanelLayout.setHorizontalGroup(
-            ExportImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 2783, Short.MAX_VALUE)
-        );
-        ExportImportPanelLayout.setVerticalGroup(
-            ExportImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 843, Short.MAX_VALUE)
-        );
-
-        jTabbedPane5.addTab("Export/Import", ExportImportPanel);
 
         ListedPanel.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         ListedPanel.setMaximumSize(getSize());
@@ -704,7 +601,77 @@ public class CvatJFrame extends javax.swing.JFrame {
                 .addGap(278, 278, 278))
         );
 
-        jTabbedPane5.addTab("Listed", ListedPanel);
+        jTabbedPane5.addTab("Load Out BOLs", ListedPanel);
+
+        javax.swing.GroupLayout BOLPanelLayout = new javax.swing.GroupLayout(BOLPanel);
+        BOLPanel.setLayout(BOLPanelLayout);
+        BOLPanelLayout.setHorizontalGroup(
+            BOLPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 2783, Short.MAX_VALUE)
+        );
+        BOLPanelLayout.setVerticalGroup(
+            BOLPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 843, Short.MAX_VALUE)
+        );
+
+        jTabbedPane5.addTab("Place Order", BOLPanel);
+
+        getAssignedBOLs.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        getAssignedBOLs.setText("Get Assigned BOLs");
+        getAssignedBOLs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                getAssignedBOLsActionPerformed(evt);
+            }
+        });
+
+        assignedBOLsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "VIEW REPORT", "Assigned On", "Driver", "From Name", "From Address", "To Name", "From Address", "ETA"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        assignedBOLsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                assignedBOLsTableMouseClicked(evt);
+            }
+        });
+        jScrollPane8.setViewportView(assignedBOLsTable);
+
+        javax.swing.GroupLayout assignedBOLsPanelLayout = new javax.swing.GroupLayout(assignedBOLsPanel);
+        assignedBOLsPanel.setLayout(assignedBOLsPanelLayout);
+        assignedBOLsPanelLayout.setHorizontalGroup(
+            assignedBOLsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(assignedBOLsPanelLayout.createSequentialGroup()
+                .addGap(26, 26, 26)
+                .addGroup(assignedBOLsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(getAssignedBOLs)
+                    .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 1105, Short.MAX_VALUE))
+                .addGap(1652, 1652, 1652))
+        );
+        assignedBOLsPanelLayout.setVerticalGroup(
+            assignedBOLsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(assignedBOLsPanelLayout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addComponent(getAssignedBOLs)
+                .addGap(46, 46, 46)
+                .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(570, Short.MAX_VALUE))
+        );
+
+        jTabbedPane5.addTab("Assigned BOLs", assignedBOLsPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -723,14 +690,6 @@ public class CvatJFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void getPastBOLVehiclesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getPastBOLVehiclesActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_getPastBOLVehiclesActionPerformed
-
-    private void isActiveBOLsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_isActiveBOLsActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_isActiveBOLsActionPerformed
-
     private void getListedBOLsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getListedBOLsActionPerformed
         //THIS GETS LISTED BOLS IN LIST TAB BY FROM AND TO REGION
         //INITIATE EVERYTHING!!!
@@ -743,6 +702,9 @@ public class CvatJFrame extends javax.swing.JFrame {
         trailerIDs.clear();
         vehiclesLoadedTableList.clear();
         vehiclesLoadedTrailer.clear();
+        driver_ids.clear();
+        pids.clear();
+        dids.clear();
 
         String selectedFrom = selectFromRegion.getSelectedItem().toString();
         String selectedTo = selectToRegion.getSelectedItem().toString();
@@ -750,7 +712,7 @@ public class CvatJFrame extends javax.swing.JFrame {
         savedTo = selectedTo;
         System.out.println("selectedFrom=" + selectedFrom + ", selectedTo=" + selectedTo);
         String bolSQL = "select "
-                + "L1.Name as \"From Name\", L1.Address as \"From Address\", "
+                + "L1.LocID, L2.LocID, L1.Name as \"From Name\", L1.Address as \"From Address\", "
                 + "L2.Name as \"To Name\",L2.Address as \"To Address\", COUNT(V.VIN) as \"# VEHICLES\" from "
                 + "(((\"order\" O inner join location L1 on O.P_ID=L1.LocID) inner join location L2 on O.D_ID=L2.LocID) "
                 + "inner join vehicle V on O.OrdID=V.OrdID) where "
@@ -767,6 +729,9 @@ public class CvatJFrame extends javax.swing.JFrame {
             System.out.println("bolCt=" + bolCt);
             for (int i = 0; i < rs.getRow(); i++) {
                 bolsLoaded.add("LOAD");
+                myBolIndexes.add(false);
+                pids.add(rs.getInt(1));
+                dids.add(rs.getInt(2));
             }
             rs.first();
         } catch (SQLException ex) {
@@ -904,6 +869,7 @@ public class CvatJFrame extends javax.swing.JFrame {
                 vehiclesLoadedTableList.get(vehiclesLoadedTableList.size() - 1).add(vehiclesTableList.get(row).get(6));
 
                 vehiclesLoadedTrailer.add("LOAD");
+
             } else if (vehiclesLoaded.get(selectedBOLIndex).get(row).equals("UNLOAD")) {
                 vehiclesLoaded.get(selectedBOLIndex).set(row, "LOAD");
                 vehiclesTableList.get(row).set(0, (row + 1) + " LOAD");
@@ -957,13 +923,14 @@ public class CvatJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_bolVehiclesTableMouseClicked
 
     private void driversTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_driversTableMouseClicked
-        if (driversTable.rowAtPoint(evt.getPoint()) != selectedDriverIndex && selectedDriverIndex!=-1) {
+        if (driversTable.rowAtPoint(evt.getPoint()) != selectedDriverIndex && selectedDriverIndex != -1) {
             loadDrivers();
             resetLoadedVins();
         }
         selectedDriverIndex = driversTable.rowAtPoint(evt.getPoint());
         driversTable.setRowSelectionInterval(selectedDriverIndex, selectedDriverIndex);
         selectedDriverLabel.setText(driversTableList.get(selectedDriverIndex).get(1));
+        selectedDriverID = driver_ids.get(selectedDriverIndex);
         hasTrailer = driversTableList.get(selectedDriverIndex).get(7);
 
     }//GEN-LAST:event_driversTableMouseClicked
@@ -1009,17 +976,25 @@ public class CvatJFrame extends javax.swing.JFrame {
                     System.out.println("bSpace=" + bSpace);
                     System.out.println("bHeight=" + bHeight);
                     System.out.println("vHeight=" + vHeight);
+                    int bol_index = 0;
                     if ((whichLevel.equals("TOP") && tSpace >= vLength) || (whichLevel.equals("BOTTOM") && bSpace >= vLength && bHeight > vHeight)) {
                         vehiclesLoadedTrailer.set(row, "UNLOAD");
                         vehiclesLoadedTableList.get(row).set(0, vehiclesLoadedTableList.get(row).get(0).split(" ")[0] + " UNLOAD");
-                        vehiclesLoadedVINs.add(new String[]{vehiclesLoadedTableList.get(row).get(1), whichLevel, vehiclesLoadedTableList.get(row).get(5)});//ADD THE VIN, BOOTOM OR TOP, AND LENGTH
+                        vehiclesLoadedVINs.add(new ArrayList<String>());
+                        bol_index = Integer.parseInt(vehiclesLoadedTableList.get(row).get(0).split(" ")[0]);
+                        //BOL,VIN,LENGTH
+                        vehiclesLoadedVINs.get(vehiclesLoadedVINs.size() - 1).add(vehiclesLoadedTableList.get(row).get(0).split(" ")[0]);//BOL INDEX
+                        vehiclesLoadedVINs.get(vehiclesLoadedVINs.size() - 1).add(vehiclesLoadedTableList.get(row).get(1));//VIN
+                        vehiclesLoadedVINs.get(vehiclesLoadedVINs.size() - 1).add(whichLevel);//BOTTOM
+                        vehiclesLoadedVINs.get(vehiclesLoadedVINs.size() - 1).add(vehiclesLoadedTableList.get(row).get(5));//Length
+
                         numberLoadedTrailer++;
                         loadedTrailerLabel.setText(String.valueOf(numberLoadedTrailer));
                         vehiclesLoadedTableModel = new SimpleTableModel(vehiclesLoadedTableList, vehiclesLoadedColumns);
                         loadedVehiclesTable.setModel(vehiclesLoadedTableModel);
                         loadedVehiclesTable.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);
                         for (int l = 0; l < vehiclesLoadedVINs.size(); l++) {
-                            System.out.println((l + 1) + ") Loaded VIN=" + vehiclesLoadedVINs.get(l)[0]);
+                            System.out.println((l + 1) + ") Loaded VIN=" + vehiclesLoadedVINs.get(l).get(1));
                         }
                         if (whichLevel.equals("BOTTOM")) {
                             //UPDATE TABLE...
@@ -1045,15 +1020,15 @@ public class CvatJFrame extends javax.swing.JFrame {
                 vehiclesLoadedTrailer.set(row, "LOAD");
                 vehiclesLoadedTableList.get(row).set(0, vehiclesLoadedTableList.get(row).get(0).split(" ")[0] + " LOAD");
                 for (int i = 0; i < vehiclesLoadedVINs.size(); i++) {
-                    if (vehiclesLoadedVINs.get(i)[0].equals(vehiclesLoadedTableList.get(row).get(1))) {
+                    if (vehiclesLoadedVINs.get(i).get(1).equals(vehiclesLoadedTableList.get(row).get(1))) {
                         //UPDATE TRAILER SPACE:                        
-                        if (vehiclesLoadedVINs.get(i)[1].equals("BOTTOM")) {
+                        if (vehiclesLoadedVINs.get(i).get(2).equals("BOTTOM")) {
                             if (hasTrailer.equals("Y")) {
                                 driversTableList.get(selectedDriverIndex).set(5, String.valueOf(bSpace + vLength));
                             } else if (hasTrailer.equals("N")) {
                                 trailersTableList.get(selectedTrailerIndex).set(5, String.valueOf(bSpace + vLength));
                             }
-                        } else if (vehiclesLoadedVINs.get(i)[1].equals("TOP")) {
+                        } else if (vehiclesLoadedVINs.get(i).get(2).equals("TOP")) {
                             if (hasTrailer.equals("Y")) {
                                 driversTableList.get(selectedDriverIndex).set(4, String.valueOf(bSpace + vLength));
                             } else if (hasTrailer.equals("N")) {
@@ -1080,31 +1055,122 @@ public class CvatJFrame extends javax.swing.JFrame {
 
     }//GEN-LAST:event_loadedVehiclesTableMouseClicked
 
-    public List<JOB> getJOBs(){
-        return myJOBs;        
-    }
-    
+
     private void loadOutMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loadOutMouseClicked
-        //public myBOLs(String _driver, String _fromRegion, String _toRegion, String _fromAddress,
-        //String _toAddress, int _bUsed, int _tUsed, int _bLength, int _tLength, int _bHeight, List<List<String>> _vehicles)
-        //BOLS = new myBOLs();
-        List<List<String>> vehicles;
-        String driver, fromRegion, toRegion, fromAddress, toAddress;
-        int bUsed, tUsed, bLength, tLength, bHeight;
-        //vehicles = 
-        driver = driversTableList.get(selectedDriverIndex).get(1);
-        fromRegion = savedFrom;
-        toRegion = savedTo;
-        fromAddress
-        
-        //myBOL = new myBOLs(, );
-        BOLS.add(myBOL);
-        myJOBs.add()
+
+        //INSERT BOLS:
+        //NOTE NEED SAVED: driver_id, PID, DID, 
+        bolids.clear();
+        splitids.clear();
+        int new_job = 0;
+        try {
+            ResultSet rs2 = DBConnection.getResultSet("SELECT MAX(JobID) as JobID FROM bol");
+            new_job = rs2.getInt("JobID") + 1;
+            int new_bol = 0;
+            for (int i = 0; i < myBolIndexes.size(); i++) {
+                if (myBolIndexes.get(i) == true) {
+                    //NEED TO INSERT BOL   
+                    ResultSet rs = DBConnection.getResultSet("SELECT MAX(BolID) FROM bol");
+
+                    rs.first();
+                    new_bol = rs.getInt("BolID") + 1;
+                    long offset = Timestamp.valueOf("2017-12-04 00:00:00").getTime();
+                    long end = Timestamp.valueOf("2018-01-05 00:00:00").getTime();
+                    long diff = end - offset + 1;
+                    Timestamp rand = new Timestamp(offset + (long) (Math.random() * diff));
+                    //INSERT BOLS
+                    DBConnection.executeSQL("INSERT INTO bol (JobID, BolID, SplitID, DriID, Status, ETA, P_ID, D_ID) VALUES"
+                            + "(" + new_job + "," + new_bol + ",0," + selectedDriverID + ",ASSIGNED," + rand + "," + pids.get(i) + "," + dids.get(i) + ")");
+                    //INSERT VEHICLES:
+                    for (int j = 0; j < vehiclesLoadedVINs.size(); j++) {
+                        //SEE IF BOLINDEX==i
+                        if (Integer.parseInt(vehiclesLoadedVINs.get(j).get(0)) == i) {
+                            DBConnection.executeSQL("UPDATE vehicle SET JobID='" + new_job + ",BolID='" + new_bol + ",SplitID=0 WHERE VIN='" + vehiclesLoadedVINs.get(j).get(1));
+                        }
+                    }
+
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CvatJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+
     }//GEN-LAST:event_loadOutMouseClicked
+
+    private void getAssignedBOLsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_getAssignedBOLsActionPerformed
+        String assBolSQL = "SELECT * FROM vAssignedBOLs";
+        ResultSet rs = DBConnection.getResultSet(assBolSQL);
+        try {
+            rs.first();
+            assignedBolsTableList.clear();
+            jobids.clear();
+            while (rs.next()) {
+                assignedBolsTableList.add(new ArrayList<String>());
+                assignedBolsTableList.get(assignedBolsTableList.size() - 1).add("VIEW REPORT");
+                jobids.add(rs.getInt(1));
+                assignedBolsTableList.get(assignedBolsTableList.size() - 1).add(rs.getString(3));//AssignON
+                assignedBolsTableList.get(assignedBolsTableList.size() - 1).add(rs.getString(4));//Driver
+                assignedBolsTableList.get(assignedBolsTableList.size() - 1).add(rs.getString(5));//From Name
+                assignedBolsTableList.get(assignedBolsTableList.size() - 1).add(rs.getString(6));//From Address
+                assignedBolsTableList.get(assignedBolsTableList.size() - 1).add(rs.getString(7));//To Name
+                assignedBolsTableList.get(assignedBolsTableList.size() - 1).add(rs.getString(8));//To Address
+                assignedBolsTableList.get(assignedBolsTableList.size() - 1).add(rs.getString(9));//ETA
+            }
+            assignedBolsTableModel = new SimpleTableModel(assignedBolsTableList, assignedBOLColumns);
+            assignedBOLsTable.setModel(assignedBolsTableModel);
+            if (assignedBolsTableList.size() > 0) {
+                assignedBOLsTable.getColumnModel().getColumn(0).setCellRenderer(cellRenderer);
+            }
+        } catch (SQLException e) {
+              System.out.println("ERROR: " + e.getMessage());
+        }
+    }//GEN-LAST:event_getAssignedBOLsActionPerformed
+
+    private void assignedBOLsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_assignedBOLsTableMouseClicked
+        assignedBOLsTable.clearSelection();
+        int row = assignedBOLsTable.rowAtPoint(evt.getPoint());
+        int col = assignedBOLsTable.columnAtPoint(evt.getPoint());
+        if (col == 0) {//IF VIEW REPOTR CLICKED...
+            System.out.println("VIEW REPORT CLICKED");
+            
+        try {
+            
+            String sourceFilePath = "reports/";
+            JasperReport ra = JasperCompileManager.compileReport(sourceFilePath + "AssignedBOLsReport.jrxml");
+            if (reportMap == null) {
+                reportMap = new HashMap();
+            } else {
+                reportMap.clear();
+            }
+            reportMap.put("JobID", jobids.get(row));
+            reportMap.put("subTitle", "BOL INFO FOR " + assignedBolsTableList.get(row).get(2));
+            //parametersMap.put("classID", GBGlobals.CID);
+            //parametersMap.put("subTitle", GBGlobals.classInfo + GBGlobals.enrollmentInfo);
+            JasperPrint jrPrintable = JasperFillManager.fillReport(ra, reportMap, DBConnection.cnn);
+            JasperViewer.viewReport(jrPrintable, false);            
+        } catch (JRException ex) {
+            // System.out.printf(" Connection Object[%s]", DBConnection.cnn);
+            ex.printStackTrace();
+        }            
+             
+
+        }
+    }//GEN-LAST:event_assignedBOLsTableMouseClicked
+
+    private void loadBolsPanel() {
+        System.out.println("loadBolsPanel called");
+        JButton getAssignedBOLs = new JButton();
+        JTable assBolsTable = new JTable();
+        assignedBOLsPanel.add(getAssignedBOLs);
+        assignedBOLsPanel.add(assBolsTable);
+        pack();
+    }
+
     public void loadDrivers() {
 
         String selectedFrom = selectFromRegion.getSelectedItem().toString();
-        String driversSQL = "select D.FName || ' ' || D.LName as \"Driver\", L.Region as \"Region\", L.Address as \"Address\","
+        String driversSQL = "select D.DriID, D.FName || ' ' || D.LName as \"Driver\", L.Region as \"Region\", L.Address as \"Address\","
                 + " (T.TLength-T.TUsed) AS \"Top Space\", (T.BLength-T.BUsed) AS \"Bottom Space\", T.BHeight, T.DriID"
                 + " from ((driver D left outer join trailer T on D.DriID=T.DriID) inner join location L on L.LocID=T.LocID and L.Region='" + selectedFrom + "')"
                 + "  order by D.FName";
@@ -1140,11 +1206,11 @@ public class CvatJFrame extends javax.swing.JFrame {
             do {
                 bolsList.add(new ArrayList<String>());
                 bolsList.get(bolsList.size() - 1).add(bolsList.size() + " " + bolsLoaded.get(bol_index++));
-                bolsList.get(bolsList.size() - 1).add(rs.getString(1));
-                bolsList.get(bolsList.size() - 1).add(rs.getString(2));
                 bolsList.get(bolsList.size() - 1).add(rs.getString(3));
                 bolsList.get(bolsList.size() - 1).add(rs.getString(4));
                 bolsList.get(bolsList.size() - 1).add(rs.getString(5));
+                bolsList.get(bolsList.size() - 1).add(rs.getString(6));
+                bolsList.get(bolsList.size() - 1).add(rs.getString(7));
             } while (rs.next());
             rs.close();
 
@@ -1165,15 +1231,17 @@ public class CvatJFrame extends javax.swing.JFrame {
 
             //------------------------------------------------------
             int driver_ct = 1;
+            driver_ids.clear();
             while (rs.next()) {
                 driversList.add(new ArrayList<String>());
                 driversList.get(driversList.size() - 1).add(String.valueOf(driver_ct++));
-                driversList.get(driversList.size() - 1).add(rs.getString(1));
+                driver_ids.add(rs.getInt(1));
                 driversList.get(driversList.size() - 1).add(rs.getString(2));
                 driversList.get(driversList.size() - 1).add(rs.getString(3));
                 driversList.get(driversList.size() - 1).add(rs.getString(4));
                 driversList.get(driversList.size() - 1).add(rs.getString(5));
                 driversList.get(driversList.size() - 1).add(rs.getString(6));
+                driversList.get(driversList.size() - 1).add(rs.getString(7));
                 //HAS TRAILER:
                 hasTrailer = rs.getString(7);
                 if (rs.wasNull()) {
@@ -1253,6 +1321,16 @@ public class CvatJFrame extends javax.swing.JFrame {
     }
 
     public void setColumns() {
+        assignedBOLColumns = new ArrayList<String>();
+        assignedBOLColumns.add("");
+        assignedBOLColumns.add("Assigned On");
+        assignedBOLColumns.add("Driver");
+        assignedBOLColumns.add("From Name");
+        assignedBOLColumns.add("From Address");
+        assignedBOLColumns.add("To Name");
+        assignedBOLColumns.add("To Address");
+        assignedBOLColumns.add("ETA");
+
         bolsColumns = new ArrayList<String>();
         bolsColumns.add("LOAD/UNLOAD");
         bolsColumns.add("From Name");
@@ -1303,8 +1381,8 @@ public class CvatJFrame extends javax.swing.JFrame {
         int bSpace = 0, tSpace = 0;
         int vLength = 0;
         for (int i = 0; i < vehiclesLoadedVINs.size(); i++) {
-            vLength = Integer.parseInt(vehiclesLoadedVINs.get(i)[2]);
-            if (vehiclesLoadedVINs.get(i)[1].equals("BOTTOM")) {
+            vLength = Integer.parseInt(vehiclesLoadedVINs.get(i).get(6));
+            if (vehiclesLoadedVINs.get(i).get(2).equals("BOTTOM")) {
                 if (hasTrailer.equals("Y")) {
                     bSpace = Integer.parseInt(driversTableList.get(selectedDriverIndex).get(5));
                     driversTableList.get(selectedDriverIndex).set(5, String.valueOf(bSpace + vLength));
@@ -1312,7 +1390,7 @@ public class CvatJFrame extends javax.swing.JFrame {
                     bSpace = Integer.parseInt(trailersTableList.get(selectedDriverIndex).get(4));
                     driversTableList.get(selectedTrailerIndex).set(4, String.valueOf(bSpace + vLength));
                 }
-            } else if (vehiclesLoadedVINs.get(i)[1].equals("TOP")) {
+            } else if (vehiclesLoadedVINs.get(i).get(2).equals("TOP")) {
                 if (hasTrailer.equals("Y")) {
                     tSpace = Integer.parseInt(driversTableList.get(selectedDriverIndex).get(4));
                     driversTableList.get(selectedDriverIndex).set(4, String.valueOf(tSpace + vLength));
@@ -1334,11 +1412,11 @@ public class CvatJFrame extends javax.swing.JFrame {
             driversTable.setRowSelectionInterval(selectedTrailerIndex, selectedTrailerIndex);
         }
     }
-    
-    public void resetLoadedVins(){
+
+    public void resetLoadedVins() {
         System.out.println("resetLoadedVins called");
         System.out.println("vehiclesLoadedTableList size=" + vehiclesLoadedTableList.size());
-        for (int i=0;i<vehiclesLoadedTableList.size();i++){
+        for (int i = 0; i < vehiclesLoadedTableList.size(); i++) {
             vehiclesLoadedTableList.get(i).set(0, vehiclesLoadedTableList.get(i).get(0).split(" ")[0] + " LOAD");
         }
         vehiclesLoadedVINs.clear();
@@ -1383,24 +1461,22 @@ public class CvatJFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel BOLPanel;
-    private javax.swing.JPanel ExportImportPanel;
     private javax.swing.JPanel ListedPanel;
+    private javax.swing.JPanel assignedBOLsPanel;
+    private javax.swing.JTable assignedBOLsTable;
     private javax.swing.JTable bolVehiclesTable;
     private javax.swing.JTable bolsTable;
     private javax.swing.JTable driversTable;
+    private javax.swing.JButton getAssignedBOLs;
     private javax.swing.JButton getListedBOLs;
-    private javax.swing.JButton getPastBOLVehicles;
-    private javax.swing.JCheckBox isActiveBOLs;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
@@ -1408,16 +1484,13 @@ public class CvatJFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JScrollPane jScrollPane8;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTabbedPane jTabbedPane5;
-    private javax.swing.JTable jTable4;
-    private javax.swing.JTable jTable6;
     private javax.swing.JButton loadOut;
     private javax.swing.JLabel loadedTrailerLabel;
     private javax.swing.JTable loadedVehiclesTable;
@@ -1432,34 +1505,4 @@ public class CvatJFrame extends javax.swing.JFrame {
     private javax.swing.JTable trailersTable;
     // End of variables declaration//GEN-END:variables
 
-    
-    public class BOL {
-        public List<List<String>> vehicles;
-        public String fromAddress, toAddress;
-        public BOL(String _fromAddress, String _toAddress, List<List<String>> _vehicles){
-            vehicles = _vehicles;
-            fromAddress = _fromAddress;
-            toAddress = _toAddress;
-        }                
-  }
-    
-    public class JOB {
-        public List<BOL> bols;
-        public String driver, fromRegion, toRegion;
-        public int bUsed, tUsed, bLength, tLength, bHeight;
-        public JOB(String _driver, String _fromRegion, String _toRegion, String _fromAddress, String _toAddress, int _bUsed, int _tUsed, int _bLength, int _tLength, int _bHeight, List<List<String>> _vehicles){
-            driver=_driver;
-            fromRegion = _fromRegion;
-            toRegion = _toRegion;
-            bUsed = _bUsed;
-            tUsed = _tUsed;
-            bLength = _bLength;
-            tLength = _tLength;
-            bHeight = _bHeight;            
-        }                
-    }  
-
-
 }
-
-
